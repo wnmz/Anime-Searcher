@@ -1,0 +1,28 @@
+{
+  "name": "weebsearcher",
+  "version": "1.0.0",
+  "description": "anime searcher that uses trace.moe",
+  "main": "index.js",
+  "engines": {
+    "node": "14.x"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bruh",
+    "anime",
+    "trace.moe",
+    "search"
+  ],
+  "author": "wnm",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "dblapi.js": "^2.4.0",
+    "discord.js": "^12.0.2",
+    "mongodb": "^3.5.5",
+    "node-fetch": "^2.6.0",
+    "request": "^2.88.2"
+  }
+}
