@@ -18,18 +18,7 @@ dbl.on('posted', () => {
 
 client.login(config.token);
 
-const gc = (client) => { // Still not sure if it optimize memory usage
-    client.guilds.cache.forEach(guild => {
-        guild.emojis.cache.clear();
-        guild.members.cache.clear();
-        guild.roles.cache.clear();
-    })
-}
-
 client.on('ready', async () => {
-    setInterval(()=>{ 
-        gc(client)
-    }, 5 * 60 * 1000)
     console.log(`Logged in as ${client.user.tag}`);
     console.log(`Working with: ${client.guilds.cache.size} guilds`);
 
