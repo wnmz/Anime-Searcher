@@ -20,6 +20,7 @@ module.exports = (docs, index, msg) => {
       `MyAnimeList: [Click!](https://myanimelist.net/anime/${result.mal_id})\n` +
       `Video: [Click!](${video_url})\n` +
       `NSFW: ${result.is_adult ? '**Yes! Yes! Yes!**' : '**No 😫**'}\n` +
+      `Support Developer: [Pateon](https://www.patreon.com/wnm)\n` +
       `${!msg.channel.nsfw && containsNSFW ? '```\nNSFW results were removed because this channel is not suitable for this content.```' : ''}`,
     image: {
       url: `https://trace.moe/thumbnail.php?anilist_id=${result.anilist_id}&file=${encodeURIComponent(result.filename)}&t=${result.at}&token=${result.tokenthumb}`
