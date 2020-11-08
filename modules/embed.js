@@ -3,6 +3,8 @@ module.exports = (docs, index, msg) => {
   let video_url = `https://media.trace.moe/video/${result.anilist_id}/${encodeURIComponent(result.filename)}?t=${result.at}&token=${result.tokenthumb}`.replace(/[)]/g, '%29')
   let containsNSFW = docs.filter(doc => doc.is_adult).length ? true : false;
   
+  if(!result) return;
+
   return {
     title: `That's what I've found ฅ^•ﻌ•^ฅ`,
     color: 7589871,
