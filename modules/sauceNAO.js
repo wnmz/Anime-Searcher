@@ -37,12 +37,15 @@ module.exports = class sauceNAO {
     }
 
     unique(results) {
+        let sources = [];
         let uniqued = []
-        results.map(e => {
-            if (!results.includes(e.anidb_aid)) {
-                uniqued = [...uniqued, e]
+        for(let res of results) {
+            if (!sources.includes(res.data.source)) {
+                sources = [...sources, res.data.source];
+                uniqued = [...uniqued, res]
             }
-        })
+        }
+
         return uniqued;
     }
 }
