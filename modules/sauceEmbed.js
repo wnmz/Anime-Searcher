@@ -16,11 +16,11 @@ module.exports = async (result, other_results, msg) => {
                 `AniDB: [Click!](https://anidb.net/anime/${result.anidb_aid})\n`,
             fields: [
                 {
-                    name: `<:traceMOE:792752572439855125> trace.moe`,
+                    name: `<:TraceMOE:793147256994791435> trace.moe`,
                     value: other_results.trace,
                 },
                 {
-                    name: `<:SauceNAO:792751898679312425> sauce.nao`,
+                    name: `<:SauceNAO:793147203035070495> sauce.nao`,
                     value: other_results.sauce,
                 }
             ],
