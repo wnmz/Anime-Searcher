@@ -8,13 +8,9 @@ const DBL = require("dblapi.js");
 
 const db = new Mongodb(config.mongodb_uri);
 const client = new Discord.Client();
-const dbl = new DBL(config.topgg_token, client);
+const dbl = config.topgg_token ? new DBL(config.topgg_token, client) : undefined;
 
 const modules = {};
-
-dbl.on('posted', () => {
-    console.log('Server count posted!');
-})
 
 client.login(config.token);
 
@@ -25,6 +21,7 @@ client.on('ready', async () => {
     client.user.setActivity('+setchannel', {
         type: 'LISTENING'
     })
+    
     try {
         fs.readdir('./modules/commands/', (err, files) => {
             files.map(file => {

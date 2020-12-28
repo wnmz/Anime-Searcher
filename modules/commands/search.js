@@ -1,10 +1,17 @@
 const Trace = require('../trace');
-const embed = require('../embed');
-const config = require('../../config')
+const Sauce = require('../sauceNAO');
+
+const utils = require('../utils');
+const traceEmbed = require('../traceEmbed');
+const sauceEmbed = require('../sauceEmbed');
+
+const config = require('../../config');
+
 const traceMoe = new Trace(config.traceMoe_token);
+const sauceNAO = new Sauce(config.sauceNAO_token);
 
 const urlCheck = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png)/i; // url check regexp
-const reactions = ['⬅️', '➡️'];
+const reactions = ['⬆️', '⬇️'];
 
 module.exports = {
     command: 'search',
@@ -12,56 +19,90 @@ module.exports = {
     run: async (client, msg, config, db) => {
         let attachments = msg.attachments.size ? msg.attachments.first().url : undefined;
         msg.content = msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined;
-        if (urlCheck.test(msg.content) || urlCheck.test(attachments)) {
+        let imageURL = attachments ? attachments : msg.content;
+
+        if (imageURL) {
             try {
                 msg.channel.startTyping();
-                let base64 = await traceMoe.getImageBase64(attachments ? attachments : msg.content);
-                let result = await traceMoe.search(base64);
-                let nsfw_counter = 0;
-                if (!msg.channel.nsfw) result.docs = result.docs.filter(doc => { //Delete all nsfw content from result if we're not in nsfw channel
-                    nsfw_counter++;
-                    return !doc.is_adult
-                })
-                if (!result.docs.length) {
-                    return msg.channel.send({
-                        embed: {
-                            title: `No ${nsfw_counter ? 'SFW' : ''} results found (⌣_⌣”)`,
-                            description: `${nsfw_counter ? 'Try searching in NSFW channel.' : ''}`
-                        }
-                    })
+                let base64 = await utils.getImageBase64(imageURL);
+                let tracemoe_result = await traceMoe.search(base64);
+                let sauceNAO_result = await sauceNAO.search(imageURL);
+
+                if (!msg.channel.nsfw) { // sauceNAO NSFW filter is still in WIP
+                    tracemoe_result = tracemoe_result.filter(doc => { //Delete all nsfw content from result if we're not in nsfw channel
+                        return !doc.is_adult
+                    });
                 }
-                let ans = await msg.channel.send({
-                    embed: embed(result.docs, 0, msg)
-                });
+
+                // if (!tracemoe_result.length) {
+                //     return msg.channel.send({
+                //         embed: {
+                //             title: `No ${nsfw_counter ? 'SFW' : ''} results found (⌣_⌣”)`,
+                //             description: `${nsfw_counter ? 'Try searching in NSFW channel.' : ''}`
+                //         }
+                //     })
+                // }
+
+                let results = [...tracemoe_result.slice(0, 5), ...sauceNAO_result.slice(0, 5)];
+
+                // let attachments = await Promise.all(sauceNAO_result.slice(0, 5).map((res, index) => { // Resizing lowres sauceNAO results
+                //     return utils.resizeImage(res.thumbnail, index)
+                // }))
+
+                let resultIndex = 0;
+                let other_results = utils.formOtherResults(results, resultIndex);
+                let answer;
+
+                switch (results[resultIndex].from) {
+                    case 'trace' :
+                        answer = await msg.channel.send(traceEmbed(results[resultIndex], other_results, msg));
+                    break;
+                    case 'sauce':
+                        answer = await msg.channel.send(await sauceEmbed(results[resultIndex], other_results, msg));
+                    break
+                }
+
                 reactions.map(async (symb) => {
-                    await ans.react(symb)
+                    await answer.react(symb)
                 })
+
                 const filter = (reaction, user) => {
                     return reactions.includes(reaction.emoji.name) && user.id == msg.author.id;
                 };
-                const collector = ans.createReactionCollector(filter, {
+                
+                const collector = answer.createReactionCollector(filter, {
                     time: 120000
                 });
-                let resultIndex = 0;
-                collector.on('collect', reaction => {
+
+                collector.on('collect', async reaction => {
                     reaction.users.remove(msg.author.id);
-                    if (reaction.emoji.name == '➡️') {
+
+                    if (reaction.emoji.name == '⬇️') {
                         resultIndex++;
+                        if(resultIndex >= results.length - 1) resultIndex = 0;
                     } else {
                         resultIndex--;
-                        if (resultIndex <= 0) currentIndex = 0;
+                        if (resultIndex <= 0) resultIndex = results.length - 1;
                     }
-                    ans.edit({
-                        embed: embed(result.docs, resultIndex % result.docs.length, msg)
-                    })
+
+                    let index = resultIndex;
+                    let other_results = utils.formOtherResults(results, index);
+
+                    answer.edit(
+                       results[resultIndex].from == 'trace' ?
+                        traceEmbed(results[index], other_results, msg) : 
+                        await sauceEmbed(results[index], other_results, msg)
+                    )
                 });
+
                 collector.on('end', async (collected) => {
-                    await ans.react('🐧')
+                    await answer.react('🐧')
                 });
             } catch (err) {
+                console.error(err);
                 msg.channel.send({
                     embed: {
-                        description: `Something went wrong (ง •̀_•́)ง`,
+                        description: `An error occurred while searching. Please try again. (ง •̀_•́)ง`,
                         color: 0xff322b
                     }
                 });
