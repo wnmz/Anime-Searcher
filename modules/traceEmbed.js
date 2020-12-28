@@ -23,11 +23,11 @@ module.exports = (result, other_results, msg) => {
       fields: [
         {
           name: `<:TraceMOE:793147256994791435> trace.moe`,
-          value: other_results.trace,
+          value: other_results.trace ? other_results.trace : `No Results! ${msg.channel.nsfw ? `` : `Try searching in NSFW channel.`}` ,
         },
         {
           name: `<:SauceNAO:793147203035070495> sauce.nao`,
-          value: other_results.sauce,
+          value: other_results.sauce ? other_results.sauce : `No Results!`,
         }
       ]
     }
