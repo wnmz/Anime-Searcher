@@ -17,7 +17,9 @@ class TraceMoe {
                     },
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    maxContentLength: Infinity,
+                    maxBodyLength: Infinity,
                 })
                 let result = request.data;
                 if (!result.limit || !result.docs.length) resolve([]);
