@@ -11,7 +11,7 @@ class TraceMoe {
                 let token = this.token ? '?token=' + this.token : ''
                 let request = await axios({
                     method: 'POST',
-                    url: `https://trace.moe/api/search${token}?url=${imageURL}`,
+                    url: `https://trace.moe/api/search?url=${imageURL}${token}`,
                     // data: { 
                     //     image: imgBase64
                     // },
