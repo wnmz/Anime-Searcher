@@ -24,8 +24,8 @@ module.exports = {
         if (imageURL) {
             try {
                 msg.channel.startTyping();
-                let base64 = await utils.getImageBase64(imageURL);
-                let tracemoe_result = await traceMoe.search(base64);
+               // let base64 = await utils.getImageBase64(imageURL);
+                let tracemoe_result = await traceMoe.search(imageURL);
                 let sauceNAO_result = await sauceNAO.search(imageURL);
 
                 if (!msg.channel.nsfw) { // sauceNAO NSFW filter is still in WIP

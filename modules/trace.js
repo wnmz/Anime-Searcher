@@ -5,16 +5,16 @@ class TraceMoe {
         this.token = token;
     }
 
-    async search(imgBase64) {
+    async search(imageURL) {
         return new Promise(async (resolve, reject) => {
             try {
                 let token = this.token ? '?token=' + this.token : ''
                 let request = await axios({
                     method: 'POST',
-                    url: `https://trace.moe/api/search${token}`,
-                    data: {
-                        image: imgBase64
-                    },
+                    url: `https://trace.moe/api/search${token}?url=${imageURL}`,
+                    // data: { 
+                    //     image: imgBase64
+                    // },
                     headers: {
                         'Content-Type': 'application/json'
                     },
