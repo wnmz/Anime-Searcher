@@ -7,7 +7,13 @@ const fs = require('fs');
 const DBL = require("dblapi.js");
 
 const db = new Mongodb(config.mongodb_uri);
-const client = new Discord.Client();
+const client = new Discord.Client({
+    messageCacheMaxSize: 1,
+    messageCacheLifetime: 30,
+    messageSweepInterval: 15,
+    partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']
+});
+
 const dbl = config.topgg_token ? new DBL(config.topgg_token, client) : undefined;
 
 const modules = {};
@@ -17,7 +23,6 @@ client.login(config.token);
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
     console.log(`Working with: ${client.guilds.cache.size} guilds`);
-
     client.user.setActivity('+setchannel', {
         type: 'LISTENING'
     })
