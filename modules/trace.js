@@ -31,7 +31,8 @@ class TraceMoe {
                 
                 resolve(data);
             } catch (err) {
-                reject(err)
+                console.error(err);
+                resolve([]);
             }
         })
     }
