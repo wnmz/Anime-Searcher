@@ -1,6 +1,6 @@
 ﻿const Mongodb = require('./modules/mongo');
 const config = require('./config.js');
-const seach = require('./modules/commands/search');
+const search = require('./modules/commands/search');
 
 const Discord = require('discord.js');
 const fs = require('fs');
@@ -57,6 +57,6 @@ client.on('message', async (msg) => {
 
     if(message.startsWith(config.prefix + 'search')) return; // to prevent multiple messages when we use +search in work channel
     let guildData = await db.getGuildSettings(msg.guild.id);
-    if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel) return seach.run(null, msg);
+    if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel) return search.run(msg);
 })
 

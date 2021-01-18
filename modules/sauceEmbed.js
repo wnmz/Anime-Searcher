@@ -1,9 +1,6 @@
-const { resizeImage } = require('./utils');
-
 module.exports = async (result, other_results, msg) => {
 
     return {
-        // files: [attachments[resultIndex]],
         embed: {
             title: `🎅 That's what I've found ฅ^•ﻌ•^ฅ`,
             color: 0x00cc4b,
