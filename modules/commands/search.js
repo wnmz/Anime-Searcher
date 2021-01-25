@@ -5,10 +5,10 @@ const utils = require('../utils');
 const traceEmbed = require('../traceEmbed');
 const sauceEmbed = require('../sauceEmbed');
 
-const config = require('../../config');
+const { traceMoe_token, sauceNao_token } = require('../../config');
 
-const traceMoe = new Trace(config.traceMoe_token);
-const sauceNAO = new Sauce(config.sauceNAO_token);
+const traceMoe = new Trace(traceMoe_token);
+const sauceNAO = new Sauce(sauceNao_token);
 
 const urlCheck = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png)/i; // url check regexp
 const reactions = ['⬆️', '⬇️'];
@@ -16,7 +16,7 @@ const reactions = ['⬆️', '⬇️'];
 module.exports = {
     command: 'search',
     description: "search anime source",
-    run: async (client, msg, config, db) => {
+    run: async (client, msg) => {
         let attachments = msg.attachments.size ? msg.attachments.first().url : undefined;
         msg.content = msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined;
         let imageURL = attachments ? attachments : msg.content;
