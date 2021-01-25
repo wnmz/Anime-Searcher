@@ -16,7 +16,7 @@ const reactions = ['⬆️', '⬇️'];
 module.exports = {
     command: 'search',
     description: "search anime source",
-    run: async msg => {
+    run: async (client, msg) => {
         let attachments = msg.attachments.size ? msg.attachments.first().url : undefined;
         msg.content = msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined;
         let imageURL = attachments ? attachments : msg.content;
