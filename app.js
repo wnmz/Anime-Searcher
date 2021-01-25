@@ -57,6 +57,6 @@ client.on('message', async (msg) => {
 
     if(message.startsWith(config.prefix + 'search')) return; // to prevent multiple messages when we use +search in work channel
     let guildData = await db.getGuildSettings(msg.guild.id);
-    if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel) return search.run(msg);
+    if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel) return search.run(client, msg);
 })
 
