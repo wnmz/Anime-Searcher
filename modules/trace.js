@@ -47,9 +47,7 @@ class TraceMoe {
             }
         }
         
-        uniqued.sort((a, b) => {
-            return b.similarity - a.similarity;
-        })
+        uniqued.sort((a, b) => b.similarity - a.similarity)
         return uniqued
     }
 }

@@ -27,11 +27,8 @@ module.exports = class sauceNAO {
                 if (!request.data?.results) resolve([]);
                 let data = this.unique(request.data.results)
                     .map(el => {
-                        let newObj = {};
-                        el.header.similarity = el.header.similarity / 100;
-                        newObj.from = 'sauce';
-                        Object.assign(newObj, el.data, el.header);
-                        return newObj;
+                        el.header.similarity = el.header.similarity / 100
+                        return Object.assign({from: 'sauce'}, el.data, el.header);
                     });
                 resolve(data);
             } catch (err) {
