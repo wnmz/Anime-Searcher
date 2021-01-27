@@ -16,11 +16,9 @@ const reactions = ['⬆️', '⬇️'];
 module.exports = {
     command: 'search',
     description: "search anime source",
-    run: async msg => {
-        let attachments = msg.attachments.size ? msg.attachments.first().url : undefined;
-        msg.content = msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined;
-        let imageURL = attachments ? attachments : msg.content;
-
+    run: async (client, msg) => {
+        let imageURL = msg.attachments.first() === undefined ? (msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined) : msg.attachments.first().url;
+        
         if (imageURL) {
             try {
                 msg.channel.startTyping();
