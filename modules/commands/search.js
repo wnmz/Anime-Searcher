@@ -1,9 +1,9 @@
-const Trace = require('../trace');
-const Sauce = require('../sauceNAO');
+const Trace = require('../SearchEngines/traceMOE');
+const Sauce = require('../SearchEngines/sauceNAO');
 
 const utils = require('../utils');
-const traceEmbed = require('../traceEmbed');
-const sauceEmbed = require('../sauceEmbed');
+const traceEmbed = require('../Embeds/traceEmbed');
+const sauceEmbed = require('../Embeds/sauceEmbed');
 
 const { traceMoe_token, sauceNao_token } = require('../../config');
 
@@ -24,28 +24,20 @@ module.exports = {
         if (imageURL) {
             try {
                 msg.channel.startTyping();
-               // let base64 = await utils.getImageBase64(imageURL);
+               // let base64 = await utils.getImageBase64(imageURL); // Trace now can work with urls.
                 let tracemoe_result = await traceMoe.search(imageURL);
                 let sauceNAO_result = await sauceNAO.search(imageURL);
 
                 if (!msg.channel.nsfw) { // sauceNAO NSFW filter is still in WIP
-                    tracemoe_result = tracemoe_result.filter(doc => { //Delete all nsfw content from result if we're not in nsfw channel
+                    tracemoe_result = tracemoe_result.filter(doc => { // Delete all nsfw content from result if we're not in nsfw channel
                         return !doc.is_adult
                     });
                 }
 
-                // if (!tracemoe_result.length) {
-                //     return msg.channel.send({
-                //         embed: {
-                //             title: `No ${nsfw_counter ? 'SFW' : ''} results found (⌣_⌣”)`,
-                //             description: `${nsfw_counter ? 'Try searching in NSFW channel.' : ''}`
-                //         }
-                //     })
-                // }
-
                 let results = [...tracemoe_result.slice(0, 5), ...sauceNAO_result.slice(0, 5)];
 
-                // let attachments = await Promise.all(sauceNAO_result.slice(0, 5).map((res, index) => { // Resizing lowres sauceNAO results
+                 // Resizing lowres sauceNAO results WIP
+                // let attachments = await Promise.all(sauceNAO_result.slice(0, 5).map((res, index) => {
                 //     return utils.resizeImage(res.thumbnail, index)
                 // }))
 
@@ -58,7 +50,7 @@ module.exports = {
                         answer = await msg.channel.send(traceEmbed(results[resultIndex], other_results, msg));
                     break;
                     case 'sauce':
-                        answer = await msg.channel.send(await sauceEmbed(results[resultIndex], other_results, msg));
+                        answer = await msg.channel.send(sauceEmbed(results[resultIndex], other_results, msg));
                     break
                 }
 
@@ -79,10 +71,10 @@ module.exports = {
 
                     if (reaction.emoji.name == '⬇️') {
                         resultIndex++;
-                        if(resultIndex >= results.length - 1) resultIndex = 0;
+                        if(resultIndex >= results.length) resultIndex = 0;
                     } else {
                         resultIndex--;
-                        if (resultIndex <= 0) resultIndex = results.length - 1;
+                        if (resultIndex < 0) resultIndex = results.length - 1;
                     }
 
                     let index = resultIndex;
@@ -91,13 +83,14 @@ module.exports = {
                     answer.edit(
                        results[resultIndex].from == 'trace' ?
                         traceEmbed(results[index], other_results, msg) : 
-                        await sauceEmbed(results[index], other_results, msg)
+                            sauceEmbed(results[index], other_results, msg)
                     )
                 });
 
-                collector.on('end', async (collected) => {
-                    await answer.react('🐧')
+                collector.on('end', async () => {
+                    answer.react('🐧')
                 });
+                
             } catch (err) {
                 console.error(err);
                 msg.channel.send({

@@ -24,7 +24,7 @@ module.exports = class sauceNAO {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                 })
-                if (!request.data?.results) resolve([]);
+                if (!request?.data?.results) resolve([]);
                 let data = this.unique(request.data.results)
                     .map(el => {
                         el.header.similarity = el.header.similarity / 100

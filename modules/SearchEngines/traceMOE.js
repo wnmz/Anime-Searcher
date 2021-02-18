@@ -41,8 +41,8 @@ class TraceMoe {
         let titleNames = [];
         let uniqued = []
         for(let res of results) {
-            if (!titleNames.includes(res.title_english)) {
-                titleNames = [...titleNames, res.title_english];
+            if (!titleNames.includes(res.title_english || res.title_romaji)) {
+                titleNames = [...titleNames, ( res.title_english || res.title_romaji )];
                 uniqued = [...uniqued, res]
             }
         }
