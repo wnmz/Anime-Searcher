@@ -106,4 +106,3 @@ dist
 .vscode
 package-lock.json
 .gitattributes
-config.js
