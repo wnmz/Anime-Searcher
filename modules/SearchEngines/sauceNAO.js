@@ -11,6 +11,7 @@ module.exports = class sauceNAO {
     search(url) {
         return new Promise(async (resolve, reject) => {
             try {
+                if (!this.token) throw Error("Specify a token (sauceNAO)"); 
                 let request = await axios({
                     method: 'POST',
                     url: `https://saucenao.com/search.php`,

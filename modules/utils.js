@@ -19,8 +19,8 @@ module.exports = {
 
     formOtherResults(results, resultIndex) {
         let otherResults = {
-            trace: ``,
-            sauce: ``
+            trace: '',
+            sauce: '',
         };
 
         for (let i = 0; i < results.length; i++) {

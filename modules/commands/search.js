@@ -15,11 +15,11 @@ const reactions = ['⬆️', '⬇️'];
 
 module.exports = {
     command: 'search',
-    description: "search anime source",
     run: async (client, msg) => {
         let attachments = msg.attachments.size ? msg.attachments.first().url : undefined;
         msg.content = msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined;
         let imageURL = attachments ? attachments : msg.content;
+
 
         if (imageURL) {
             try {
@@ -82,7 +82,7 @@ module.exports = {
 
                     answer.edit(
                        results[resultIndex].from == 'trace' ?
-                        traceEmbed(results[index], other_results, msg) : 
+                            traceEmbed(results[index], other_results, msg) : 
                             sauceEmbed(results[index], other_results, msg)
                     )
                 });
