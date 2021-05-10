@@ -15,7 +15,7 @@ const reactions = ['⬆️', '⬇️'];
 
 module.exports = {
     command: 'search',
-    run: async (client, msg) => {
+    run: async (_, msg) => {
         let attachments = msg.attachments.size ? msg.attachments.first().url : undefined;
         msg.content = msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined;
         let imageURL = attachments ? attachments : msg.content;
