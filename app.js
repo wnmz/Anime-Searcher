@@ -25,7 +25,7 @@ class Searcher extends Discord.Client {
         this.on('ready', async () => {
             console.log(`Logged in as ${this.user.tag}`);
             console.log(`Working with: ${this.guilds.cache.size} guilds`);
-            this.user.setActivity('+setchannel', {
+            this.user.setActivity(`${config.prefix}help`, {
                 type: 'LISTENING'
             })
             this.cmdHandler();
