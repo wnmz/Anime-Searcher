@@ -23,7 +23,7 @@ client.login(config.token);
 client.on('ready', async () => {
     console.log(`Logged in as ${client.user.tag}`);
     console.log(`Working with: ${client.guilds.cache.size} guilds`);
-    client.user.setActivity('+setchannel', {
+    client.user.setActivity(`${config.prefix}help`, {
         type: 'LISTENING'
     })
     
