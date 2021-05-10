@@ -12,7 +12,7 @@ class Searcher extends Discord.Client {
             messageCacheMaxSize: 1,
             messageCacheLifetime: 30,
             messageSweepInterval: 15,
-            shardCount: 'auto',
+            shardCount: 5,
             partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']
         });
         this.modules = new Object();
