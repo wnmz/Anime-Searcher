@@ -59,12 +59,14 @@ class Searcher extends Discord.Client {
             } finally {
                 msg.channel.stopTyping();
             }
-        
-            if(message.attachments && !message.startsWith(config.prefix + 'search')) return; // to prevent multiple messages when we use +search in work channel
+
+            if (message.attachments && !message.startsWith(config.prefix + 'search')) return; // to prevent multiple messages when we use +search in work channel
             let guildData = await this.db.getGuildSettings(msg.guild.id);
             if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel) return search.run(this, msg);
         })
     }
 }
 
-module.exports = { Searcher };
+module.exports = {
+    Searcher
+};
