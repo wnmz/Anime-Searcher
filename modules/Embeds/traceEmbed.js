@@ -1,5 +1,4 @@
 module.exports = (result, other_results, msg) => {
-  let video_url = `https://media.trace.moe/video/${result.anilist_id}/${encodeURIComponent(result.filename)}?t=${result.at}&token=${result.tokenthumb}&size=l`.replace(/[)]/g, '%29')
   const template = {
     embed: {
       author: {
@@ -11,13 +10,13 @@ module.exports = (result, other_results, msg) => {
         `Title: **${result.title_romaji}**\n` +
         `Similarity: **${(result.similarity * 100).toFixed(2)}%**\n` +
         `Episode: **${(result.episode || 1).toString().padStart(2, "0")}**\n` +
-        `Timestamp: **${formatTime(result.at)}**\n` +
-        `MyAnimeList: [Click!](https://myanimelist.net/anime/${result.mal_id})\n` +
-        `Video: [Click!](${video_url})\n` +
-        `NSFW: ${result.is_adult ? '**Yes! Yes! Yes!**' : '**No 😫**'}\n`,
+        `Timestamp: **${formatTime(result.from)}**\n` +
+        `Anilist: [Click!](https://anilist.co/anime/${result.anilist}/)\n` +
+        `Video: [Click!](${result.video})\n` +
+        `NSFW: ${result.is_adult ? '**Yes**' : '**No**'}\n`,
       fields: [],
       image: {
-        url: `https://media.trace.moe/image/${result.anilist_id}/${encodeURIComponent(result.filename)}?t=${result.at}&token=${result.tokenthumb}&size=m`
+        url:  result.image
       },
       footer: {
         icon_url: msg.author.avatarURL(),

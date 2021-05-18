@@ -25,8 +25,8 @@ module.exports = {
 
         for (let i = 0; i < results.length; i++) {
             let r = results[i];
-            if (r.from == 'trace') {
-                otherResults.trace += `${i == resultIndex ? '👉 ' : ''}[${r.title_english || r.title_romaji}](https://myanimelist.net/anime/${r.mal_id})\n`
+            if (r.origin == 'trace') {
+                otherResults.trace += `${i == resultIndex ? '👉 ' : ''}[${r.title_english || r.title_romaji}](https://anilist.co/anime/${r.anilist}/)\n`
             } else {
                 otherResults.sauce += `${i == resultIndex ? '👉 ' : ''}[${r.source}](https://anidb.net/anime/${r.anidb_aid})\n`
             }

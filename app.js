@@ -10,9 +10,9 @@ class Searcher extends Discord.Client {
     constructor() {
         super({
             messageCacheMaxSize: 1,
-            messageCacheLifetime: 30,
-            messageSweepInterval: 15,
-            partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']
+            messageCacheLifetime: 1,
+            messageSweepInterval: 1,
+            partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER', 'GUILD_MEMBER']
         });
         this.modules = new Object();
         this.dbl = config.topgg_token ? new DBL(config.topgg_token, this) : undefined;
@@ -22,6 +22,7 @@ class Searcher extends Discord.Client {
     start() {
         this.login(config.token);
         this.on('ready', async () => {
+            await this.db.init();
             console.log(`Logged in as ${this.user.tag}`);
             console.log(`Working with: ${this.guilds.cache.size} guilds`);
             this.user.setActivity(`${config.prefix}help`, {

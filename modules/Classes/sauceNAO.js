@@ -28,12 +28,11 @@ module.exports = class sauceNAO {
                 if (!request?.data?.results) resolve([]);
                 let data = this.unique(request.data.results)
                     .map(el => {
-                        el.header.similarity = el.header.similarity / 100
-                        return Object.assign({from: 'sauce'}, el.data, el.header);
+                        el.header.similarity = el.header.similarity / 100;
+                        return Object.assign({ origin: 'sauce' }, el.data, el.header);
                     });
                 resolve(data);
             } catch (err) {
-                console.error(err);
                 resolve([]);
             }
         })

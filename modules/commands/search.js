@@ -1,5 +1,5 @@
-const Trace = require('../SearchEngines/traceMOE');
-const Sauce = require('../SearchEngines/sauceNAO');
+const Trace = require('../Classes/traceMOE');
+const Sauce = require('../Classes/sauceNAO');
 
 const utils = require('../utils');
 const traceEmbed = require('../Embeds/traceEmbed');
@@ -24,7 +24,6 @@ module.exports = {
         if (imageURL) {
             try {
                 msg.channel.startTyping();
-               // let base64 = await utils.getImageBase64(imageURL); // Trace now can work with urls.
                 let tracemoe_result = await traceMoe.search(imageURL);
                 let sauceNAO_result = await sauceNAO.search(imageURL);
 
@@ -36,16 +35,11 @@ module.exports = {
 
                 let results = [...tracemoe_result.slice(0, 5), ...sauceNAO_result.slice(0, 5)];
 
-                 // Resizing lowres sauceNAO results WIP
-                // let attachments = await Promise.all(sauceNAO_result.slice(0, 5).map((res, index) => {
-                //     return utils.resizeImage(res.thumbnail, index)
-                // }))
-
                 let resultIndex = 0;
                 let other_results = utils.formOtherResults(results, resultIndex);
                 let answer;
 
-                switch (results[resultIndex].from) {
+                switch (results[resultIndex].origin) {
                     case 'trace' :
                         answer = await msg.channel.send(traceEmbed(results[resultIndex], other_results, msg));
                     break;
@@ -81,7 +75,7 @@ module.exports = {
                     let other_results = utils.formOtherResults(results, index);
 
                     answer.edit(
-                       results[resultIndex].from == 'trace' ?
+                       results[resultIndex].origin == 'trace' ?
                             traceEmbed(results[index], other_results, msg) : 
                             sauceEmbed(results[index], other_results, msg)
                     )
