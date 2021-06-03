@@ -3,7 +3,7 @@ const axios = require('axios');
 const formUrlEncoded = x =>
     Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, '');
 
-module.exports = class sauceNAO {
+class sauceNAO {
     constructor(token) {
         this.token = token;
     }
@@ -52,3 +52,5 @@ module.exports = class sauceNAO {
         return uniqued;
     }
 }
+
+module.exports = sauceNAO;

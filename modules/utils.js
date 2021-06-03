@@ -1,6 +1,7 @@
 const axios = require('axios')
-// const Canvas = require('canvas');
-// const Discord = require('discord.js');
+const traceEmbed = require('./Embeds/traceEmbed');
+const sauceEmbed = require('./Embeds/sauceEmbed');
+const DiscordButtons = require('discord-buttons');
 
 module.exports = {
     getImageBase64(url) {
@@ -34,16 +35,40 @@ module.exports = {
         return otherResults;
     },
 
-    //Resizing is still in WIP
+    formMsgObject(msg, results, resultIndex, other_results, includeButtons = true) {
+        let msgObj = {};
 
-    // resizeImage(imageURL, index) { //Resize lowres sauceNao Image to fit in discord embed (320x200)
-    //     return new Promise(async(resolve, reject) => {
-    //         const canvas = Canvas.createCanvas(320, 200);
-    //         const ctx = canvas.getContext('2d');
-    //         const image = await Canvas.loadImage(imageURL);
-    //         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    //         const attachment = new Discord.MessageAttachment(canvas.toBuffer(), `image${index}.png`);
-    //         resolve(attachment); 
-    //     })
-    // }
+        let prevBtn = new DiscordButtons.MessageButton()
+            .setLabel("Prev")
+            .setStyle("green")
+            .setEmoji("⬆️")
+            .setID("prev");
+
+        let nextBtn = new DiscordButtons.MessageButton()
+            .setLabel("Next")
+            .setStyle("green")
+            .setEmoji("⬇️")
+            .setID("next");
+
+        let buttonRow = new DiscordButtons.MessageActionRow()
+            .addComponent(prevBtn)
+            .addComponent(nextBtn);
+
+        switch (results[resultIndex].origin) {
+            case 'trace' :
+                msgObj = {
+                    component: includeButtons ? buttonRow : null,
+                    embed: traceEmbed(results[resultIndex], other_results, msg),
+                };
+            break;
+            case 'sauce':
+                msgObj = {
+                    component: includeButtons ? buttonRow : null,
+                    embed: sauceEmbed(results[resultIndex], other_results, msg),
+                };
+            break;
+        }
+
+        return msgObj
+    }
 }

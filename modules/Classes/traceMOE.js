@@ -24,8 +24,6 @@ class TraceMoe {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    maxContentLength: Infinity,
-                    maxBodyLength: Infinity,
                 });
                 this.getAnimeInfo(request.data.result[0].anilist);
                 resolve(request?.data?.result ?? []);

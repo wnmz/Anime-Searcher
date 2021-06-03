@@ -2,10 +2,9 @@ const Trace = require('../Classes/traceMOE');
 const Sauce = require('../Classes/sauceNAO');
 
 const utils = require('../utils');
-const traceEmbed = require('../Embeds/traceEmbed');
-const sauceEmbed = require('../Embeds/sauceEmbed');
 
 const { traceMoe_token, sauceNao_token } = require('../../config');
+const { MessageButton, MessageActionRow } = require('discord-buttons');
 
 const traceMoe = new Trace(traceMoe_token);
 const sauceNAO = new Sauce(sauceNao_token);
@@ -34,36 +33,25 @@ module.exports = {
                 }
 
                 let results = [...tracemoe_result.slice(0, 5), ...sauceNAO_result.slice(0, 5)];
+                if(results.length == 0) return;
 
                 let resultIndex = 0;
                 let other_results = utils.formOtherResults(results, resultIndex);
                 let answer;
 
-                switch (results[resultIndex].origin) {
-                    case 'trace' :
-                        answer = await msg.channel.send(traceEmbed(results[resultIndex], other_results, msg));
-                    break;
-                    case 'sauce':
-                        answer = await msg.channel.send(sauceEmbed(results[resultIndex], other_results, msg));
-                    break
-                }
+                answer = await msg.channel.send(utils.formMsgObject(msg, results, resultIndex, other_results, true));
 
-                reactions.map(async (symb) => {
-                    await answer.react(symb)
-                })
 
-                const filter = (reaction, user) => {
-                    return reactions.includes(reaction.emoji.name) && user.id == msg.author.id;
-                };
-                
-                const collector = answer.createReactionCollector(filter, {
+                const filter = (button) =>  button.clicker.user.id === msg.author.id;
+                                
+                const collector = answer.createButtonCollector(filter, {
                     time: 120000
                 });
-
-                collector.on('collect', async reaction => {
-                    reaction.users.remove(msg.author.id);
-
-                    if (reaction.emoji.name == '⬇️') {
+                
+                    
+                collector.on('collect', async button => {
+                    button.defer();
+                    if (button.id == "next") {
                         resultIndex++;
                         if(resultIndex >= results.length) resultIndex = 0;
                     } else {
@@ -71,18 +59,12 @@ module.exports = {
                         if (resultIndex < 0) resultIndex = results.length - 1;
                     }
 
-                    let index = resultIndex;
-                    let other_results = utils.formOtherResults(results, index);
-
-                    answer.edit(
-                       results[resultIndex].origin == 'trace' ?
-                            traceEmbed(results[index], other_results, msg) : 
-                            sauceEmbed(results[index], other_results, msg)
-                    )
+                    let other_results = utils.formOtherResults(results, resultIndex);
+                    answer.edit(utils.formMsgObject(msg, results, resultIndex, other_results, true));
                 });
 
-                collector.on('end', async () => {
-                    answer.react('🐧')
+                collector.on('end', () => {
+                    answer.edit(utils.formMsgObject(msg, results, resultIndex, other_results, false));
                 });
                 
             } catch (err) {
