@@ -7,12 +7,15 @@ class TraceMoe {
         this.token = token;
     }
 
-    async search(imageURL) {
-        let result = await this.fetch(imageURL);
-        result = this.unique(result);
-        await this.assignAnimeInfo(result);
-        this.assignElementsOrigin(result);
-        return result;
+    search(imageURL) {
+        return new Promise(async (resolve, reject)=>{
+            let [error, result] = await this.fetch(imageURL);
+            result = this.unique(result);
+            await this.assignAnimeInfo(result);
+            this.assignElementsOrigin(result);
+            resolve([error, result]);
+        })
+
     }
 
     fetch(imageURL) {
@@ -26,10 +29,9 @@ class TraceMoe {
                     },
                 });
                 this.getAnimeInfo(request.data.result[0].anilist);
-                resolve(request?.data?.result ?? []);
+                resolve([null, (request?.data?.result ?? [])]); // [Error, Data]
             } catch (err) {
-                console.error(err);
-                resolve([]);
+                resolve([err, []]);
             }
         })
     }

@@ -27,12 +27,12 @@ module.exports = (result, other_results, msg) => {
 
   if (other_results.trace) template.fields = [{
     name: `trace.moe`,
-    value: other_results.trace ? other_results.trace : `No Results! ${msg.channel.nsfw ? `` : `Try searching in NSFW channel.`}`,
+    value: other_results.trace ?? `No Results! ${msg.channel.nsfw ? `` : `Try searching in NSFW channel.`}`,
   }]
 
-  if (other_results.sauce) template.fields = [...template.embed.fields, {
+  if (other_results.sauce) template.fields = [...template.fields, {
     name: `sauce.nao`,
-    value: other_results.sauce ? other_results.sauce : `No Results!`,
+    value: other_results.sauce ?? `No Results!`,
   }]
 
   return template;

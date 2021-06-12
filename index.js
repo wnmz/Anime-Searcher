@@ -1,3 +1,4 @@
+'use scrict';
 const { token } = require('./config.js')
 
 const { ShardingManager } = require('discord.js');

@@ -23,8 +23,12 @@ module.exports = {
         if (imageURL) {
             try {
                 msg.channel.startTyping();
-                let tracemoe_result = await traceMoe.search(imageURL);
+                // Trace.moe is decided to be "main" source provider
+                //cuz it's api is less spam protected
+                let [trace_error, tracemoe_result] = await traceMoe.search(imageURL);
                 let sauceNAO_result = await sauceNAO.search(imageURL);
+
+                if(trace_error) throw new Error(trace_error);
 
                 if (!msg.channel.nsfw) { // sauceNAO NSFW filter is still in WIP
                     tracemoe_result = tracemoe_result.filter(doc => { // Delete all nsfw content from result if we're not in nsfw channel
@@ -72,7 +76,7 @@ module.exports = {
                 msg.channel.send({
                     embed: {
                         description: `An error occurred while searching. Please try again. (ง •̀_•́)ง`,
-                        color: 0xff322b
+                        color: 0x00cc4b
                     }
                 });
             } finally {
