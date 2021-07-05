@@ -5,7 +5,7 @@ const reactions = ['1️⃣', '2️⃣', '3️⃣', '⬅️'];
 module.exports = {
     command: 'help',
     description: "help command",
-    run: async (client, message) => {
+    run: async (_, message) => {
         const options = {
             default:
                 `**Commands**\n\n` +
@@ -15,7 +15,8 @@ module.exports = {
                 `1️⃣ - **How do I set up the bot?**\n` +
                 `2️⃣ - **Why is my search result wrong?**\n` +
                 `3️⃣ - **There're problems using/setting the bot, what should I do?** \n\n` +
-                `\`Click the reactions to select options you need.\``,
+                `**Invite URL:** [https://discord.com/oauth2/authorize?client_id=559247918280867848&scope=bot&permissions=52288](https://discord.com/oauth2/authorize?client_id=559247918280867848&scope=bot&permissions=52288)\n` +
+                `\n\`Click the reactions to select options you need.\``,
             first: 
                 `**How do I set up the bot?**\n` +
                 `\`There're just a few easy steps to set up the bot.\`\n\n` +

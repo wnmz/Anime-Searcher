@@ -39,20 +39,27 @@ module.exports = {
         let msgObj = {};
 
         let prevBtn = new DiscordButtons.MessageButton()
-            .setLabel("Prev")
+            .setLabel("Up")
             .setStyle("green")
             .setEmoji("⬆️")
-            .setID("prev");
+            .setID("up");
 
         let nextBtn = new DiscordButtons.MessageButton()
-            .setLabel("Next")
+            .setLabel("Down")
             .setStyle("green")
             .setEmoji("⬇️")
-            .setID("next");
+            .setID("down");
+
+        let patreonBtn = new DiscordButtons.MessageButton()
+            .setStyle("url")
+            .setEmoji("❤️")
+            .setLabel("Patreon")
+            .setURL("https://www.patreon.com/animesearcher")
 
         let buttonRow = new DiscordButtons.MessageActionRow()
             .addComponent(prevBtn)
-            .addComponent(nextBtn);
+            .addComponent(nextBtn)
+            .addComponent(patreonBtn);
 
         switch (results[resultIndex].origin) {
             case 'trace' :

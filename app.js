@@ -1,6 +1,7 @@
 ﻿﻿const Mongodb = require('./modules/mongo');
 const config = require('./config.js');
 const search = require('./modules/commands/search');
+const antispam = require('./modules/antispam');
 
 const Discord = require('discord.js');
 const fs = require('fs');
@@ -28,7 +29,7 @@ client.on('ready', async () => {
     client.user.setActivity(`${config.prefix}help`, {
         type: 'LISTENING'
     })
-    
+
     try {
         fs.readdir('./modules/commands/', (err, files) => {
             files.map(file => {
@@ -48,15 +49,23 @@ client.on('message', async (msg) => {
     try {
         let cmd = message.split(' ')[0]
         if (Object.keys(modules).includes(cmd)) {
-            msg.channel.startTyping();
-            return modules[Object.keys(modules)[Object.keys(modules).indexOf(cmd)]].run(client, msg, config, db);
+            let isSpammer = antispam.checkUser(msg);
+            if (!isSpammer) {
+                msg.channel.startTyping();
+                return modules[Object.keys(modules)[Object.keys(modules).indexOf(cmd)]].run(client, msg, config, db);
+            }
+
         }
+
+        let guildData = await db.getGuildSettings(msg.guild.id);
+        if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel) {
+            let isSpammer = antispam.checkUser(msg);
+            if (!isSpammer) return search.run(client, msg);
+        } 
+        
     } catch (err) {
         console.log(err)
     } finally {
         msg.channel.stopTyping();
     }
-
-    let guildData = await db.getGuildSettings(msg.guild.id);
-    if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel) return search.run(client, msg);
 })

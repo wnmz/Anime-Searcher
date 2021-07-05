@@ -10,6 +10,15 @@ class sauceNAO {
 
     search(url) {
         return new Promise(async (resolve, reject) => {
+            let [error, data] = await this.fetch(url);
+            let uniqueResults = this.unique(data);
+            let results = this.normalize(uniqueResults);
+            resolve([error, results]);
+        });
+    }
+
+    fetch(url) {
+        return new Promise(async (resolve, reject) => {
             try {
                 if (!this.token) throw Error("Specify a token (sauceNAO)"); 
                 let request = await axios({
@@ -25,18 +34,13 @@ class sauceNAO {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                 })
-                if (!request?.data?.results) resolve([]);
-                let data = this.unique(request.data.results)
-                    .map(el => {
-                        el.header.similarity = el.header.similarity / 100;
-                        return Object.assign({ origin: 'sauce' }, el.data, el.header);
-                    });
-                resolve(data);
+                if (!request?.data?.results) throw new Error("No Results Found");
+                let data = request.data.results;
+                resolve([null, data]);
             } catch (err) {
-                resolve([]);
+                resolve([err, new Array()]);
             }
-        })
-
+        });
     }
 
     unique(results) {
@@ -50,6 +54,13 @@ class sauceNAO {
         }
 
         return uniqued;
+    }
+
+    normalize(results) {
+        return results.map(el => {
+            el.header.similarity = el.header.similarity / 100;
+            return Object.assign({ origin: 'sauce' }, el.data, el.header);
+        });
     }
 }
 

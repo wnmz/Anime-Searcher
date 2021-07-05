@@ -8,7 +8,7 @@ class TraceMoe {
     }
 
     search(imageURL) {
-        return new Promise(async (resolve, reject)=>{
+        return new Promise(async (resolve, reject) => {
             let [error, result] = await this.fetch(imageURL);
             result = this.unique(result);
             await this.assignAnimeInfo(result);
