@@ -18,6 +18,8 @@ const client = new Discord.Client({
 const DiscordButtons = require("discord-buttons")(client);
 const dbl = config.topgg_token ? new DBL(config.topgg_token, client) : undefined;
 
+const urlCheck = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png)/i; // url check regexp
+
 const modules = {};
 
 client.login(config.token);
@@ -58,7 +60,12 @@ client.on('message', async (msg) => {
         }
 
         let guildData = await db.getGuildSettings(msg.guild.id);
-        if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel) {
+
+        let attachments = msg.attachments.size ? msg.attachments.first().url : undefined;
+        let imgUrl = msg.content.match(urlCheck) == null ? false : true;
+        let isIncludesImage = attachments ? true : imgUrl
+
+        if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel && isIncludesImage) {
             let isSpammer = antispam.checkUser(msg);
             if (!isSpammer) return search.run(client, msg);
         } 
