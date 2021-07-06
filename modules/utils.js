@@ -50,6 +50,7 @@ module.exports = {
             .setEmoji("⬇️")
             .setID("down");
 
+
         let patreonBtn = new DiscordButtons.MessageButton()
             .setStyle("url")
             .setEmoji("❤️")
@@ -62,18 +63,18 @@ module.exports = {
             .addComponent(patreonBtn);
 
         switch (results[resultIndex].origin) {
-            case 'trace' :
+            case 'trace':
                 msgObj = {
                     component: includeButtons ? buttonRow : null,
                     embed: traceEmbed(results[resultIndex], other_results, msg),
                 };
-            break;
+                break;
             case 'sauce':
                 msgObj = {
                     component: includeButtons ? buttonRow : null,
                     embed: sauceEmbed(results[resultIndex], other_results, msg),
                 };
-            break;
+                break;
         }
 
         return msgObj

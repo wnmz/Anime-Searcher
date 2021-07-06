@@ -54,11 +54,11 @@ const search = {
 
                 collector.on('collect', async button => {
                     button.defer();
-                    if (button.id == "up") {
+                    if (button.id == "down") {
                         resultIndex++;
                         if (resultIndex >= results.length) resultIndex = 0;
                     }
-                    if (button.id == "down") {
+                    if (button.id == "up") {
                         resultIndex--;
                         if (resultIndex < 0) resultIndex = results.length - 1;
                     }
