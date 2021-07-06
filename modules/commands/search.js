@@ -15,8 +15,8 @@ const search = {
     command: 'search',
     run: async (_, msg, gotErrorsInRow = 0) => {
         let attachments = msg.attachments.size ? msg.attachments.first().url : undefined;
-        msg.content = msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined;
-        let imageURL = attachments ? attachments : msg.content;
+        let url = msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined;
+        let imageURL = attachments ? attachments : url;
 
 
         if (imageURL) {
