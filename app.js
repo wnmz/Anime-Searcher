@@ -3,33 +3,17 @@ const config = require('./config.js');
 const search = require('./modules/commands/search');
 const antispam = require('./modules/antispam');
 
-const { Client, Intents, Options } = require('discord.js');
+const { Client, Intents, Options } = require('discord.js-light');
 
 const fs = require('fs');
 const DBL = require("dblapi.js");
 
 const db = new Mongodb(config.mongodb_uri);
 const client = new Client({
-        makeCache: Options.cacheWithLimits({
-                MessageManager: {
-                    maxSize: 1,
-                    sweepInterval: 1000,
-                },
-                GuildBanManager: 0,
-                PresenceManager: 0,
-                ReactionManager: 0,
-                ReactionUserManager: 0,
-                StageInstanceManager: 0,
-                ThreadManager: 0,
-                ThreadMemberManager: 0,
-                VoiceStateManager: 0,
-            }),
-        intents: [ 
+        intents: [
             Intents.FLAGS.GUILDS,
             Intents.FLAGS.GUILD_MESSAGES,
-            Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
             Intents.FLAGS.GUILD_MESSAGE_TYPING,
-            Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
             Intents.FLAGS.DIRECT_MESSAGES,
         ],
         messageCacheMaxSize: 1,
