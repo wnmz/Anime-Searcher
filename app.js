@@ -3,14 +3,25 @@ const config = require('./config.js');
 const search = require('./modules/commands/search');
 const antispam = require('./modules/antispam');
 
-const { Client, Intents, Options } = require('discord.js-light');
+const { Client, Intents, Options } = require('discord.js');
 
 const fs = require('fs');
 const DBL = require("dblapi.js");
 
 const db = new Mongodb(config.mongodb_uri);
 const client = new Client({
-        intents: [
+        makeCache: Options.cacheWithLimits({
+                MessageManager: 0,
+                GuildBanManager: 0,
+                PresenceManager: 0,
+                ReactionManager: 0,
+                ReactionUserManager: 0,
+                StageInstanceManager: 0,
+                ThreadManager: 0,
+                ThreadMemberManager: 0,
+                VoiceStateManager: 0,
+            }),
+        intents: [ 
             Intents.FLAGS.GUILDS,
             Intents.FLAGS.GUILD_MESSAGES,
             Intents.FLAGS.GUILD_MESSAGE_TYPING,
