@@ -11,7 +11,10 @@ const DBL = require("dblapi.js");
 const db = new Mongodb(config.mongodb_uri);
 const client = new Client({
         makeCache: Options.cacheWithLimits({
-                MessageManager: 0,
+                MessageManager: {
+                    maxSize: 1,
+                    sweepInterval: 1000,
+                },
                 GuildBanManager: 0,
                 PresenceManager: 0,
                 ReactionManager: 0,
