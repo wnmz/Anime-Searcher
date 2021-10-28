@@ -1,6 +1,6 @@
 'use scrict';
 const { token } = require('./config.js')
-const { ShardingManager } = require("discord.js")
+const { ShardingManager } = require("discord.js-light")
 const shard = new ShardingManager('./app.js', {
   token,
   shardCount: 'auto',
