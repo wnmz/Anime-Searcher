@@ -1,82 +1,92 @@
-const axios = require('axios')
+const {
+    MessageActionRow,
+    MessageButton
+} = require('discord.js');
+
+//const axios = require('axios')
 const traceEmbed = require('./Embeds/traceEmbed');
 const sauceEmbed = require('./Embeds/sauceEmbed');
-const DiscordButtons = require('discord-buttons');
 
 module.exports = {
-    getImageBase64(url) {
-        return new Promise(async (resolve, reject) => {
-            try {
-                let image = await axios.get(url, {
-                    responseType: 'arraybuffer'
-                });
-                let returnedB64 = Buffer.from(image.data, 'binary').toString('base64');
-                resolve(returnedB64)
-            } catch (err) {
-                reject(err)
-            }
-        })
-    },
+    // getImageBase64(url) {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //             let image = await axios.get(url, {
+    //                 responseType: 'arraybuffer'
+    //             });
+    //             let returnedB64 = Buffer.from(image.data, 'binary').toString('base64');
+    //             resolve(returnedB64)
+    //         } catch (err) {
+    //             reject(err)
+    //         }
+    //     })
+    // },
 
-    formOtherResults(results, resultIndex) {
-        let otherResults = {
+    stringifyResults(results, resultIndex) {
+        let resultsObj = {
             trace: '',
             sauce: '',
         };
 
-        for (let i = 0; i < results.length; i++) {
-            let r = results[i];
-            if (r.origin == 'trace') {
-                otherResults.trace += `${i == resultIndex ? '👉 ' : ''}[${r.title_english || r.title_romaji}](https://anilist.co/anime/${r.anilist}/)\n`
-            } else {
-                otherResults.sauce += `${i == resultIndex ? '👉 ' : ''}[${r.source}](https://anidb.net/anime/${r.anidb_aid})\n`
+        results.forEach((r, i) => {
+            switch(r.origin) {
+                case 'trace':
+                    resultsObj.trace += `${i == resultIndex ? '👉 ' : ''}[${r.title_english || r.title_romaji}](https://anilist.co/anime/${r.anilist}/)\n`
+                break;
+                case 'sauce':
+                    resultsObj.sauce += `${i == resultIndex ? '👉 ' : ''}[${r.source}](https://anidb.net/anime/${r.anidb_aid})\n`
+                break;
             }
-        }
-        return otherResults;
+        });
+        return resultsObj;
     },
 
-    formMsgObject(msg, results, resultIndex, other_results, includeButtons = true) {
-        let msgObj = {};
+    formResultEmbed(msg, results, resultIndex, other_results, isDisabled = false) {
+        let embed = {};
 
-        let prevBtn = new DiscordButtons.MessageButton()
+        let prevBtn = new MessageButton()
+            .setCustomId("up")
             .setLabel("Up")
-            .setStyle("green")
+            .setStyle("SUCCESS")
             .setEmoji("⬆️")
-            .setID("up");
+            .setDisabled(isDisabled)
 
-        let nextBtn = new DiscordButtons.MessageButton()
+        let nextBtn = new MessageButton()
+            .setCustomId("down")
             .setLabel("Down")
-            .setStyle("green")
+            .setStyle("SUCCESS")
             .setEmoji("⬇️")
-            .setID("down");
+            .setDisabled(isDisabled)
 
+        let inviteBtn = new MessageButton()
+            .setLabel("Invite Bot")
+            .setURL("https://discord.com/oauth2/authorize?client_id=559247918280867848&scope=bot&permissions=52288")
+            .setStyle("LINK")
 
-        let patreonBtn = new DiscordButtons.MessageButton()
-            .setStyle("url")
-            .setEmoji("❤️")
-            .setLabel("Patreon")
-            .setURL("https://www.patreon.com/animesearcher")
+        // let patreonBtn = new DiscordButtons.MessageButton()
+        //     .setStyle("url")
+        //     .setEmoji("❤️")
+        //     .setLabel("Patreon")
+        //     .setURL("https://www.patreon.com/animesearcher")
 
-        let buttonRow = new DiscordButtons.MessageActionRow()
-            .addComponent(prevBtn)
-            .addComponent(nextBtn)
-            .addComponent(patreonBtn);
+        let buttonRow = new MessageActionRow()
+            .addComponents(prevBtn, nextBtn, inviteBtn);
 
         switch (results[resultIndex].origin) {
             case 'trace':
-                msgObj = {
-                    component: includeButtons ? buttonRow : null,
-                    embed: traceEmbed(results[resultIndex], other_results, msg),
+                embed = {
+                    components: [ buttonRow ],
+                    embeds: [ traceEmbed(results[resultIndex], other_results, msg) ],
                 };
                 break;
             case 'sauce':
-                msgObj = {
-                    component: includeButtons ? buttonRow : null,
-                    embed: sauceEmbed(results[resultIndex], other_results, msg),
+                embed = {
+                    components: [ buttonRow ],
+                    embeds: [ sauceEmbed(results[resultIndex], other_results, msg) ],
                 };
                 break;
         }
 
-        return msgObj
+        return embed;
     }
 }

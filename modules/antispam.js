@@ -12,11 +12,7 @@ module.exports = {
             if (timeDiff < interval) {
                 if (userLogs.messageCount != 1 && userLogs.messageCount > maxMsgsInInterval) {
                     msg.channel.send(`You're sending messages too quick. Try again in: \`${((interval - timeDiff)/1000).toFixed(2)}s.\``)
-                        .then(msg => {
-                            msg.delete({
-                                timeout: 5000
-                            })
-                        })
+                        .then(msg => msg.delete({timeout: 5000}))
                     return true;
                 }
             } else {

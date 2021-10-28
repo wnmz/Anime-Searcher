@@ -1,4 +1,6 @@
-const DiscordButtons = require('discord-buttons');
+// TODO: Fuck indexes, rewrite the code to work only with entities (objects).
+const { MessageActionRow, MessageButton, Message, ButtonInteraction } = require('discord.js');
+
 const Trace = require('../Classes/traceMOE');
 const Sauce = require('../Classes/sauceNAO');
 
@@ -18,10 +20,8 @@ const search = {
         let url = msg.content.match(urlCheck) ? msg.content.match(urlCheck)[0] : undefined;
         let imageURL = attachments ? attachments : url;
 
-
         if (imageURL) {
             try {
-                msg.channel.startTyping();
                 // Trace.moe is decided to be "main" source provider
                 let [trace_error, tracemoe_result] = await traceMoe.search(imageURL);
                 let [sauce_error, sauceNAO_result] = await sauceNAO.search(imageURL);
@@ -39,36 +39,27 @@ const search = {
                 if (results.length == 0) return;
 
                 let resultIndex = 0;
-                let other_results = utils.formOtherResults(results, resultIndex);
-                let answer;
+                let other_results = utils.stringifyResults(results, resultIndex);
+                let answer = await msg.channel.send(utils.formResultEmbed(msg, results, resultIndex, other_results));
 
-                answer = await msg.channel.send(utils.formMsgObject(msg, results, resultIndex, other_results, true));
+                const filter = (i) => i.user.id === msg.author.id;
 
-
-                const filter = (button) => button.clicker.user.id === msg.author.id;
-
-                const collector = answer.createButtonCollector(filter, {
-                    time: 120000
-                });
-
-
-                collector.on('collect', async button => {
-                    button.defer();
-                    if (button.id == "down") {
-                        resultIndex++;
-                        if (resultIndex >= results.length) resultIndex = 0;
+                const collector = answer.createMessageComponentCollector({ filter, time: 120000 });
+                
+                collector.on('collect', async interaction => {
+                    if (interaction.customId == "down") {
+                        if (++resultIndex >= results.length) resultIndex = 0; 
                     }
-                    if (button.id == "up") {
-                        resultIndex--;
-                        if (resultIndex < 0) resultIndex = results.length - 1;
+                    if (interaction.customId == "up") {
+                        if (--resultIndex < 0) resultIndex = results.length - 1;
                     }
 
-                    let other_results = utils.formOtherResults(results, resultIndex);
-                    answer.edit(utils.formMsgObject(msg, results, resultIndex, other_results, true));
+                    other_results = utils.stringifyResults(results, resultIndex);
+                    interaction.update(utils.formResultEmbed(msg, results, resultIndex, other_results));
                 });
 
                 collector.on('end', () => {
-                    answer.edit(utils.formMsgObject(msg, results, resultIndex, other_results, false));
+                    answer.edit(utils.formResultEmbed(msg, results, resultIndex, other_results, true));
                 });
 
             } catch (err) {
@@ -77,18 +68,18 @@ const search = {
                     // Missing Permissions
                     if(err?.code == 50013) return msg.author.send("Sorry, I don't have enough permissions to send messages.")
 
-                    let retryBtn = new DiscordButtons.MessageButton()
+                    let retryBtn = new MessageButton()
+                        .setCustomId("retry")
                         .setLabel("Try Again!")
-                        .setStyle("grey")
+                        .setStyle("SECONDARY")
                         .setEmoji("♻️")
-                        .setID("retry");
 
                     let errorMsg = await msg.channel.send({
-                        component: gotErrorsInRow > 3 ?  null : retryBtn ,
-                        embed: {
+                        components: gotErrorsInRow > 3 ?  [] : [retryBtn] ,
+                        embeds: [{
                             description: `An error occurred while searching. Please try again. (ง •̀_•́)ง`,
                             color: 0x00cc4b
-                        }
+                        }]
                     });
 
                     if(gotErrorsInRow <= 3) 
@@ -112,8 +103,6 @@ const search = {
                 } catch (e) {
                     console.log(err);
                 }
-            } finally {
-                msg.channel.stopTyping();
             }
         }
         else

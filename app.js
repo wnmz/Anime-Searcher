@@ -3,24 +3,32 @@ const config = require('./config.js');
 const search = require('./modules/commands/search');
 const antispam = require('./modules/antispam');
 
-const Discord = require('discord.js');
+const { Client, Intents } = require('discord.js');
+
 const fs = require('fs');
 const DBL = require("dblapi.js");
 
 const db = new Mongodb(config.mongodb_uri);
-const client = new Discord.Client({
-    messageCacheMaxSize: 1,
-    messageCacheLifetime: 1,
-    messageSweepInterval: 1,
-    partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']
+const client = new Client({
+        intents: [ 
+            Intents.FLAGS.GUILDS,
+            Intents.FLAGS.GUILD_MESSAGES,
+            Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+            Intents.FLAGS.GUILD_MESSAGE_TYPING,
+            Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+            Intents.FLAGS.DIRECT_MESSAGES,
+        ],
+        messageCacheMaxSize: 1,
+        messageCacheLifetime: 1,
+        partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']
 });
 
-const DiscordButtons = require("discord-buttons")(client);
 const dbl = config.topgg_token ? new DBL(config.topgg_token, client) : undefined;
-
 const urlCheck = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png)/i; // url check regexp
-
 const modules = {};
+
+
+
 
 client.login(config.token);
 
@@ -32,6 +40,7 @@ client.on('ready', async () => {
         type: 'LISTENING'
     })
 
+    //TODO: Replace FS with modules and add slash commands support
     try {
         fs.readdir('./modules/commands/', (err, files) => {
             files.map(file => {
@@ -45,18 +54,17 @@ client.on('ready', async () => {
     }
 })
 
-client.on('message', async (msg) => {
+client.on('messageCreate', async (msg) => {
     if (msg.author.bot) return
-    let message = msg.content.toLocaleLowerCase();
     try {
+        let message = msg.content.toLocaleLowerCase();
         let cmd = message.split(' ')[0]
         if (Object.keys(modules).includes(cmd)) {
             let isSpammer = antispam.checkUser(msg);
             if (!isSpammer) {
-                msg.channel.startTyping();
+                msg.channel.sendTyping();
                 return modules[Object.keys(modules)[Object.keys(modules).indexOf(cmd)]].run(client, msg, config, db);
             }
-
         }
 
         let guildData = await db.getGuildSettings(msg.guild.id);
@@ -67,12 +75,12 @@ client.on('message', async (msg) => {
 
         if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel && isIncludesImage) {
             let isSpammer = antispam.checkUser(msg);
-            if (!isSpammer) return search.run(client, msg);
+            if(isSpammer) return;
+            msg.channel.sendTyping();
+            search.run(client, msg);
         } 
         
     } catch (err) {
         console.log(err)
-    } finally {
-        msg.channel.stopTyping();
     }
 })

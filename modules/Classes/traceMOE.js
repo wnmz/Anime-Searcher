@@ -57,13 +57,13 @@ class TraceMoe {
     }
 
     async getAnimeInfo(anilistID) {
-            let data = await Anilist.media.anime(anilistID);
-            let info = {
-                title_romaji: data?.title?.romaji,
-                title_english: data?.title?.english,
-                is_adult: data?.isAdult
-            }
-            return info;
+        let data = await Anilist.media.anime(anilistID);
+        let info = {
+            title_romaji: data?.title?.romaji,
+            title_english: data?.title?.english,
+            is_adult: data?.isAdult
+        }
+        return info;
     }
 
     async assignAnimeInfo(items) {

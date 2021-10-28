@@ -1,7 +1,7 @@
 const axios = require('axios');
+const { ContextMenuInteraction } = require('discord.js');
 
-const formUrlEncoded = x =>
-    Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, '');
+const formUrlEncoded = x => Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, '');
 
 class sauceNAO {
     constructor(token) {
