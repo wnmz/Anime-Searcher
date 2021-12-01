@@ -11,7 +11,7 @@ const { traceMoe_token, sauceNao_token } = require('../../config');
 const traceMoe = new Trace(traceMoe_token);
 const sauceNAO = new Sauce(sauceNao_token);
 
-const urlCheck = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png)/i; // url check regexp
+const urlCheck = /(http(s?):)([\/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i; // url check regexp
 
 const search = {
     command: 'search',

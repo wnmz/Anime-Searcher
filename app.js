@@ -10,30 +10,30 @@ const DBL = require("dblapi.js");
 
 const db = new Mongodb(config.mongodb_uri);
 const client = new Client({
-        makeCache: Options.cacheWithLimits({
-                MessageManager: 0,
-                GuildBanManager: 0,
-                PresenceManager: 0,
-                ReactionManager: 0,
-                ReactionUserManager: 0,
-                StageInstanceManager: 0,
-                ThreadManager: 0,
-                ThreadMemberManager: 0,
-                VoiceStateManager: 0,
-            }),
-        intents: [ 
-            Intents.FLAGS.GUILDS,
-            Intents.FLAGS.GUILD_MESSAGES,
-            Intents.FLAGS.GUILD_MESSAGE_TYPING,
-            Intents.FLAGS.DIRECT_MESSAGES,
-        ],
-        messageCacheMaxSize: 1,
-        messageCacheLifetime: 1,
-        partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']
+    makeCache: Options.cacheWithLimits({
+        MessageManager: 0,
+        GuildBanManager: 0,
+        PresenceManager: 0,
+        ReactionManager: 0,
+        ReactionUserManager: 0,
+        StageInstanceManager: 0,
+        ThreadManager: 0,
+        ThreadMemberManager: 0,
+        VoiceStateManager: 0,
+    }),
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_TYPING,
+        Intents.FLAGS.DIRECT_MESSAGES,
+    ],
+    messageCacheMaxSize: 1,
+    messageCacheLifetime: 1,
+    partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']
 });
 
 const dbl = config.topgg_token ? new DBL(config.topgg_token, client) : undefined;
-const urlCheck = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png)/i; // url check regexp
+const urlCheck = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i; // url check regexp
 const modules = {};
 
 
@@ -84,11 +84,11 @@ client.on('messageCreate', async (msg) => {
 
         if (guildData && guildData.settings.workChannel && msg.channel.id == guildData.settings.workChannel && isIncludesImage) {
             let isSpammer = antispam.checkUser(msg);
-            if(isSpammer) return;
+            if (isSpammer) return;
             msg.channel.sendTyping();
             search.run(client, msg);
-        } 
-        
+        }
+
     } catch (err) {
         console.log(err)
     }
