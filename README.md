@@ -13,15 +13,17 @@ git clone https://github.com/wnmz/Anime-Searcher.git
 4. Rename file `.env.example` to `.env` and put you environment variables here
     ```
     BOT_TOKEN=  
+    BOT_CLIENT_ID= ### Optional
     MONGODB_URI=
     TOPGG_TOKEN= ### Optional
     SAUCENAO_TOKEN= ### Optional
     TRACEMOE_TOKEN= ### Optional
     TOPGG_TOKEN= ### Optional
+    IMAGE_PROXY_API= ### Optional
     ```
 5. Start script `npm run start` or `node app.mjs`
 
-# Demo (Outdated)
+# Demo (Old version w/o buttons)
 <img src="https://cdn.discordapp.com/attachments/758209391731277829/841300623684665394/output.gif">
 
 <br>

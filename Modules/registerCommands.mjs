@@ -9,7 +9,7 @@ export const registerCommands = (clientId) => {
 
 		const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
 
-		rest.put(Routes.applicationCommand(clientId), { body: JSONCommands })
+		rest.put(Routes.applicationCommands(clientId), { body: JSONCommands })
 			.then(() => console.log('Successfully registered application commands.'))
 			.catch(console.error);
 	}
