@@ -14,8 +14,6 @@ const {
 
 const urlCheckRegExp = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i;
 
-const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
-
 const db = new Mongodb(MONGODB_URI);
 const client = new Client({
 	makeCache: Options.cacheWithLimits({
@@ -39,6 +37,8 @@ const client = new Client({
 	messageCacheLifetime: 1,
 	partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER'],
 });
+
+const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
 
 client.on('ready', async () => {
 	await db.init();
