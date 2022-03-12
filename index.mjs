@@ -14,13 +14,13 @@ if (!MONGODB_URI) throw new Error('MONGODB_URI is not defined in process environ
 // Optional
 if (BOT_CLIENT_ID) registerCommands(BOT_CLIENT_ID);
 
-// const shard = new ShardingManager('./app.mjs', {
-// 	token: BOT_TOKEN,
-// 	totalShards: 'auto',
-// 	shardList: 'auto',
-// });
+const shard = new ShardingManager('./app.mjs', {
+	token: BOT_TOKEN,
+	totalShards: 'auto',
+	shardList: 'auto',
+});
 
-// shard.spawn();
-// shard.on('shardCreate', sh => {
-// 	console.log(`[SHARD] Shard ${sh.id} is ready!.`);
-// });
+shard.spawn();
+shard.on('shardCreate', sh => {
+	console.log(`[SHARD] Shard ${sh.id} is ready!.`);
+});
