@@ -1,20 +1,24 @@
 {
-  "name": "weebsearcher",
-  "version": "1.1.0",
-  "description": "anime searcher that uses trace.moe",
+  "name": "animesearcher",
+  "version": "2.0",
+  "description": "Discord bot made to search anime source by image",
   "main": "index.js",
   "engines": {
     "node": "16.x"
   },
+  "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.mjs",
+    "dev": "nodemon index.mjs"
   },
   "keywords": [
-    "bruh",
+    "animeSearcher",
+    "anime-searcher",
     "anime",
     "trace.moe",
     "sauce.moe",
-    "search"
+    "search",
+    "searcher"
   ],
   "author": "wnm",
   "license": "ISC",
@@ -22,13 +26,16 @@
     "@discordjs/rest": "^0.1.0-canary.0",
     "anilist-node": "^1.9.1",
     "axios": "^0.22.0",
-    "canvas": "^2.8.0",
     "dblapi.js": "^2.4.0",
     "discord-api-types": "^0.24.0",
     "discord.js": "^13.1.0",
     "discord.js-light": "^4.2.1",
+    "dotenv": "^16.0.0",
     "mongodb": "^4.1.2",
     "node-fetch": "^3.0.0",
     "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.8.0"
   }
 }
