@@ -13,7 +13,7 @@ export default class SauceNAOResult {
 		const template = {
 			author: {
 				name: 'That\'s what I\'ve found ฅ^•ﻌ•^ฅ',
-				icon_url: msg.client.user.avatarURL(),
+				icon_url: msg.client.user?.avatarURL() ,
 			},
 			color: 0x00cc4b,
 			description:
@@ -28,7 +28,7 @@ export default class SauceNAOResult {
 				url: imageURL,
 			},
 			footer: {
-				icon_url: msg?.author?.avatarURL() ?? msg.user.avatarURL(),
+				icon_url: msg?.author?.avatarURL() ?? msg.user?.avatarURL() ?? 'https://discord.com/assets/2d20a45d79110dc5bf947137e9d99b66.svg',
 				text: `Requested by ${msg?.author?.username ?? msg.user.tag}, Author: wnm#1663`,
 			},
 		};

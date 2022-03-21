@@ -29,7 +29,7 @@ export default class TraceMOEResult {
 				url: imageURL,
 			},
 			footer: {
-				icon_url: msg?.author?.avatarURL() ?? msg.user.avatarURL(),
+				icon_url: msg?.author?.avatarURL() ?? msg?.user?.avatarURL() ?? 'https://discord.com/assets/2d20a45d79110dc5bf947137e9d99b66.svg',
 				text: `Requested by ${msg?.author?.username ?? msg.user.tag}, Author: wnm#1663`,
 			},
 		};
