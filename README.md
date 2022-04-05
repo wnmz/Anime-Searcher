@@ -12,16 +12,23 @@ git clone https://github.com/wnmz/Anime-Searcher.git
 
 4. Rename file `.env.example` to `.env` and put you environment variables here
     ```
-    BOT_TOKEN=  
+    BOT_TOKEN= ### REQUIRED  
+    MONGODB_URI= #### REQUIRED  
     BOT_CLIENT_ID= ### Optional
-    MONGODB_URI=
     TOPGG_TOKEN= ### Optional
     SAUCENAO_TOKEN= ### Optional
     TRACEMOE_TOKEN= ### Optional
     TOPGG_TOKEN= ### Optional
     IMAGE_PROXY_API= ### Optional
+        Example: https://mserverexpress.herokuapp.com/api/proxyImage?url=
+    IMAGE_PROXY_API_POSTPARAMS= ### Optional
+        Example: &width=400&height=225
     ```
 5. Start script `npm run start` or `node app.mjs`
+
+# Have no clue what is ImageProxyAPI?
+ It's a simple express server that proxy images by urls. It helps the bot to resize images. 
+ <br>Repository: https://github.com/wnmz/ImageProxyAPI
 
 # Demo (Old version w/o buttons)
 <img src="https://cdn.discordapp.com/attachments/758209391731277829/841300623684665394/output.gif">

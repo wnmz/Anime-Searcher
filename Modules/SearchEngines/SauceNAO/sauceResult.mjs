@@ -6,9 +6,8 @@ export default class SauceNAOResult {
 	}
 
 	toEmbed(msg, resultList) {
-		// SauceNao images are small-sized...
 		const imageURL = process.env.IMAGE_PROXY_API ?
-			process.env.IMAGE_PROXY_API + encodeURIComponent(this.data.thumbnail) + '&w=700&h=500' :
+			process.env.IMAGE_PROXY_API + encodeURIComponent(this.data.thumbnail) + process.env.IMAGE_PROXY_API_POSTPARAMS :
 			this.data.thumbnail;
 		const template = {
 			author: {

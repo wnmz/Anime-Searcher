@@ -66,20 +66,21 @@ client.on('messageCreate', async msg => {
 		if (msg.channel.id == gildData?.settings?.workChannel) return commands['search'].run(msg, db, false);
 	}
 
-	const rawCmd = msg.content.split(' ')[0];
-	const cmd = rawCmd.toLowerCase();
-	// TODO: Remove outdated prefix commands notification
-	if (cmd[0] == '+' && interactions[cmd.slice(1, cmd.length)]) {
-		return msg.channel.send({
-			content: 'Sorry, but prefix commands are outdated. ' +
-				'Please use slash version of this command.\n' +
-				`Example: **/${cmd.slice(1, cmd.length)}**`,
-		});
-	}
+	// ------- Outdated prefix commands ------- 
+	// const rawCmd = msg.content.split(' ')[0];
+	// const cmd = rawCmd.toLowerCase();
 
-	if (!interactions[cmd]) return;
-	if (!interactions[cmd].isCommand) return;
-	return interactions[cmd].run(msg, db);
+	// if (cmd[0] == '+' && interactions[cmd.slice(1, cmd.length)]) {
+	// 	return msg.channel.send({
+	// 		content: 'Sorry, but prefix commands are outdated. ' +
+	// 			'Please use slash version of this command.\n' +
+	// 			`Example: **/${cmd.slice(1, cmd.length)}**`,
+	// 	});
+	// }
+
+	// if (!interactions[cmd]) return;
+	// if (!interactions[cmd].isCommand) return;
+	// return interactions[cmd].run(msg, db);
 });
 
 client.login(BOT_TOKEN);
