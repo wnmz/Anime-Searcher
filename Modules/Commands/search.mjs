@@ -70,8 +70,17 @@ const formMsgComponents = (isDisabled = false) => {
 		.setURL('https://discord.com/oauth2/authorize?client_id=559247918280867848&scope=bot&permissions=52288')
 		.setStyle('LINK');
 
-	const buttonRow = new MessageActionRow()
-		.addComponents(prevBtn, nextBtn, inviteBtn);
+	const donateBtn = new MessageButton()
+		.setLabel('Support Creator')
+		.setEmoji('❤️')
+		.setURL('https://boosty.to/wnm')
+		.setStyle('LINK');
 
-	return [buttonRow];
+	const buttonRow = new MessageActionRow()
+		.addComponents(prevBtn, nextBtn)
+	const utilsRow = new MessageActionRow()
+		.addComponents(donateBtn, inviteBtn);
+
+
+	return [utilsRow, buttonRow];
 };
