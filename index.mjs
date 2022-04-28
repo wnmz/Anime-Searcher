@@ -16,11 +16,11 @@ if (BOT_CLIENT_ID) registerCommands(BOT_CLIENT_ID);
 
 const shard = new ShardingManager('./app.mjs', {
 	token: BOT_TOKEN,
-	totalShards: 'auto',
+	totalShards: 8,
 	shardList: 'auto',
 });
 
-shard.spawn();
+shard.spawn({ amount: shard.totalShards, delay: 5500, timeout: 50000 });
 shard.on('shardCreate', sh => {
-	console.log(`[SHARD] Shard ${sh.id} is ready!.`);
+	console.log(`[SHARD] Shard ${sh.id} was created.`);
 });

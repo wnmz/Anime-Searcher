@@ -40,8 +40,11 @@ const client = new Client({
 
 const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
 
+let dbInitialized = false;
+
 client.on('ready', async () => {
 	await db.init();
+	dbInitialized = true;
 	console.log(`Logged in as ${client.user.tag}`);
 	console.log(`Working with: ${client.guilds.cache.size} guilds`);
 	client.user.setActivity('/help', {
@@ -50,12 +53,15 @@ client.on('ready', async () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
+	if(!dbInitialized) return;
 	if (!interaction.isCommand()) return;
 	if (!interactions[interaction.commandName]) return;
 	interactions[interaction.commandName].run(interaction, db);
 });
 
 client.on('messageCreate', async msg => {
+	if(!dbInitialized) return;
+	
 	if (msg.author.bot) return;
 
 	// In case the message includes image and sent to the work channel
