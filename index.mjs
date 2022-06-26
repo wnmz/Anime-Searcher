@@ -16,7 +16,7 @@ if (BOT_CLIENT_ID) registerCommands(BOT_CLIENT_ID);
 
 const shard = new ShardingManager('./app.mjs', {
 	token: BOT_TOKEN,
-	totalShards: 8,
+	totalShards: 10,
 	shardList: 'auto',
 });
 

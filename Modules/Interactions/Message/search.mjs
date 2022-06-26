@@ -1,6 +1,7 @@
 import { MessageActionRow, MessageButton } from 'discord.js';
-import { SlashCommandBuilder } from '@discordjs/builders';
+import { SlashCommandBuilder, ContextMenuCommandBuilder } from '@discordjs/builders';
 import SearchEngine from '../../SearchEngines/searchEngine.mjs';
+const urlCheckRegExp = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i;
 
 export default {
 	name: 'search',
@@ -14,54 +15,62 @@ export default {
 				.setRequired(true),
 			);
 	},
+	getContextBuilder: function() {
+		return new ContextMenuCommandBuilder()
+			.setName(this.name)
+			.setType(3);
+	},
+	run: async (interaction) => {
+		const message = interaction.options.getMessage('message');
+		const imageURL = interaction.options.getString('image')
+			|| message?.attachments?.first?.()?.url
+			|| message.content.match(urlCheckRegExp)?.shift();
 
-	run: async (interaction, db) => {
-		const imageURL = interaction.options.getString('image');
+		if (!imageURL) return interaction.reply({ content: 'Image not found!', ephemeral: true });
 
-		if (imageURL) {
-			await interaction.deferReply({ ephemeral: true });
+		await interaction.deferReply({ ephemeral: true });
 
-			try {
-				const searchEngine = new SearchEngine();
-				const results = await searchEngine.search(imageURL);
-				if (results.isEmpty) return new Error('No results');
+		try {
+			const searchEngine = new SearchEngine();
+			const results = await searchEngine.search(imageURL);
+			if (results.isEmpty) return new Error('No results');
 
-				const answer = await interaction.editReply({
+			const answer = await interaction.editReply({
+				embeds: [results.current.toEmbed(interaction, results)],
+				components: formMsgComponents(false),
+				ephemeral: true,
+			});
+
+			const filter = (i) => i.user.id === interaction.user.id;
+			const collector = answer.createMessageComponentCollector({ filter, time: 120000 });
+
+			collector.on('collect', async (btnInteraction) => {
+				if (btnInteraction.customId == 'down') results.next();
+				if (btnInteraction.customId == 'up') results.previous();
+
+				btnInteraction.update({
 					embeds: [results.current.toEmbed(interaction, results)],
 					components: formMsgComponents(false),
 					ephemeral: true,
 				});
+			});
 
-				const filter = (i) => i.user.id === interaction.user.id;
-				const collector = answer.createMessageComponentCollector({ filter, time: 120000 });
-
-				collector.on('collect', async (btnInteraction) => {
-					if (btnInteraction.customId == 'down') results.next();
-					if (btnInteraction.customId == 'up') results.previous();
-
-					btnInteraction.update({
-						embeds: [results.current.toEmbed(interaction, results)],
-						components: formMsgComponents(false),
-						ephemeral: true,
-					});
-				});
-
-				collector.on('end', () => {
-					interaction.editReply({
-						embeds: [results.current.toEmbed(interaction, results)],
-						components: formMsgComponents(true),
-						ephemeral: true,
-					});
-				});
-			}
-			catch (e) {
-				console.error('[Search Interaction] ' + e);
-				return interaction.editReply({
-					content: 'An error occurred while searching (╯°□°)╯︵ ┻━┻',
+			collector.on('end', () => {
+				interaction.editReply({
+					embeds: [results.current.toEmbed(interaction, results)],
+					components: formMsgComponents(true),
 					ephemeral: true,
 				});
-			}
+			});
 		}
+		catch (e) {
+			console.error('[Search Interaction] ' + e);
+			return interaction.editReply({
+				content: 'An error occurred while searching (╯°□°)╯︵ ┻━┻',
+				ephemeral: true,
+			});
+		}
+
 	},
 };
 

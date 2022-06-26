@@ -7,10 +7,18 @@ export const registerCommands = (clientId) => {
 		const JSONCommands = Object.values(interactions)
 			.map((command) => command.getSlashBuilder().toJSON());
 
+		const JSONContextMenuInteractions = Object.values(interactions)
+			.filter((command) => command.getContextBuilder != undefined)
+			.map((command) => command.getContextBuilder().toJSON());
+
 		const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
 
 		rest.put(Routes.applicationCommands(clientId), { body: JSONCommands })
 			.then(() => console.log('Successfully registered application commands.'))
+			.catch(console.error);
+
+		rest.put(Routes.applicationCommands(clientId), { body: JSONContextMenuInteractions })
+			.then(() => console.log('Successfully registered application context menu interactions.'))
 			.catch(console.error);
 	}
 	catch (e) {

@@ -53,15 +53,16 @@ client.on('ready', async () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
-	if(!dbInitialized) return;
-	if (!interaction.isCommand()) return;
+	if (!dbInitialized) return;
+	if (!interaction.isCommand() && !interaction.isMessageContextMenu()) return;
 	if (!interactions[interaction.commandName]) return;
 	interactions[interaction.commandName].run(interaction, db);
+
 });
 
 client.on('messageCreate', async msg => {
-	if(!dbInitialized) return;
-	
+	if (!dbInitialized) return;
+
 	if (msg.author.bot) return;
 
 	// In case the message includes image and sent to the work channel
@@ -71,22 +72,6 @@ client.on('messageCreate', async msg => {
 		const gildData = await db.getGuildSettings(msg.guild.id);
 		if (msg.channel.id == gildData?.settings?.workChannel) return commands['search'].run(msg, db, false);
 	}
-
-	// ------- Outdated prefix commands ------- 
-	// const rawCmd = msg.content.split(' ')[0];
-	// const cmd = rawCmd.toLowerCase();
-
-	// if (cmd[0] == '+' && interactions[cmd.slice(1, cmd.length)]) {
-	// 	return msg.channel.send({
-	// 		content: 'Sorry, but prefix commands are outdated. ' +
-	// 			'Please use slash version of this command.\n' +
-	// 			`Example: **/${cmd.slice(1, cmd.length)}**`,
-	// 	});
-	// }
-
-	// if (!interactions[cmd]) return;
-	// if (!interactions[cmd].isCommand) return;
-	// return interactions[cmd].run(msg, db);
 });
 
 client.login(BOT_TOKEN);
