@@ -16,16 +16,18 @@ export default {
 		await interaction.deferReply({ ephemeral: true });
 
 		const options = {
-			default: '**Commands**\n\n' +
-				'**`/search`** `image_url/file` - Start searching for image source.\n' +
-				'**`/setchannel`** - Set channel in which bot will be triggered on every image.\n\n' +
+			first: '**Commands**\n\n' +
+				'**`/search`** `file attachment or image url` - search for image source.\n' +
+				// '**`/setchannel`** - Set channel in which bot will be triggered on every image.\n\n' +
 				'\n`Click the buttons below to select options you need.`',
-			first: '**How do I set up the bot?**\n' +
-				'`There\'re just a few easy steps to set up the bot.`\n\n' +
-				'**1)** Choose text channel in which bot process every image.\n' +
-				'**2)** Connect bot to that channel using `/setchannel` command.\n' +
-				`**Example usage -> **\`/setchannel\` ${interaction.channel}\n` +
-				'**3)** Send any image into selected channel.',
+			// first: "** **",
+			// Old instruction if yoy're selfhosting.
+			// '**How do I set up the bot?**\n' +
+			// '`There\'re just a few easy steps to set up the bot.`\n\n' +
+			// '**1)** Choose text channel in which bot process every image.\n' +
+			// '**2)** Connect bot to that channel using `/setchannel` command.\n' +
+			// `**Example usage -> **\`/setchannel\` ${interaction.channel}\n` +
+			// '**3)** Send any image into selected channel.',
 			second: '**Why is my search result wrong?**\n\n' +
 				'Actually idk, but I would recommend you to check this: [https://trace.moe/faq](https://trace.moe/faq)\n',
 			third: '**There\'re problems using/setting the bot, what should I do?**\n\n' +
@@ -34,7 +36,7 @@ export default {
 
 		const firstBtn = new MessageButton()
 			.setCustomId('first')
-			.setLabel('How do I set up the bot?')
+			.setLabel('Commands')
 			.setStyle('SUCCESS');
 
 		const secondBtn = new MessageButton()
@@ -70,9 +72,10 @@ export default {
 					title: '📓 Help Menu',
 					color: 0x36393E,
 					description: options.first,
-					image: {
-						url: 'https://cdn.discordapp.com/attachments/758209391731277829/841300623684665394/output.gif',
-					},
+					// TODO: Update gif
+					// image: {
+					// 	url: 'https://cdn.discordapp.com/attachments/758209391731277829/841300623684665394/output.gif',
+					// },
 					footer: {
 						text: 'Support: https://discord.gg/TMxh6xz',
 						icon_url: interaction.member.user.avatarURL(),
@@ -94,9 +97,9 @@ export default {
 				switch (btnInteraction.customId) {
 				case ('first'):
 					embed.description = options.first;
-					embed.image = {
-						url: 'https://cdn.discordapp.com/attachments/758209391731277829/841300623684665394/output.gif',
-					};
+					// embed.image = {
+					// 	url: 'https://cdn.discordapp.com/attachments/758209391731277829/841300623684665394/output.gif',
+					// };
 					break;
 				case ('second'):
 					embed.description = options.second;
@@ -116,7 +119,7 @@ export default {
 
 			collector.on('end', () => {
 				interaction.deferUpdate({
-					embeds: [answer.embeds[0]]
+					embeds: [answer.embeds[0]],
 				});
 			});
 		}

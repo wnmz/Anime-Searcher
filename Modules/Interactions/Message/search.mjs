@@ -6,29 +6,35 @@ const urlCheckRegExp = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i;
 export default {
 	name: 'search',
 	description: 'Provide an image URL with this command to look for it\'s source',
-	getSlashBuilder: function() {
+	getSlashBuilder: function () {
 		return new SlashCommandBuilder()
 			.setName(this.name)
 			.setDescription(this.description)
-			.addStringOption(opt => opt.setName('image')
-				.setDescription('The image you are looking for the source of \\o/')
-				.setRequired(true),
+			.addAttachmentOption(opt => opt.setName('attachment')
+				.setDescription('The image attachment you are looking for the source of \\o/')
+				.setRequired(false),
+			)
+			.addStringOption(opt => opt.setName('url')
+				.setDescription('The image URL you are looking for the source of \\o/')
+				.setRequired(false),
 			);
 	},
-	getContextBuilder: function() {
+	getContextBuilder: function () {
 		return new ContextMenuCommandBuilder()
 			.setName(this.name)
 			.setType(3);
 	},
 	run: async (interaction) => {
 		const message = interaction.options.getMessage('message');
-		const imageURL = interaction.options.getString('image')
+		const imageURL = interaction.options.getAttachment('attachment')?.url
+			|| interaction.options.getString('image')
 			|| message?.attachments?.first?.()?.url
-			|| message.content.match(urlCheckRegExp)?.shift();
-
-		if (!imageURL) return interaction.reply({ content: 'Image not found!', ephemeral: true });
+			|| message?.content?.match(urlCheckRegExp)?.shift();
 
 		await interaction.deferReply({ ephemeral: true });
+
+		if (!imageURL) return interaction.editReply({ content: 'Image not found!', ephemeral: true });
+
 
 		try {
 			const searchEngine = new SearchEngine();
