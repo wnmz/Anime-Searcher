@@ -2,7 +2,7 @@
   "name": "animesearcher",
   "version": "2.0",
   "description": "Discord bot made to search anime source by image",
-  "main": "index.js",
+  "main": "index.mjs",
   "engines": {
     "node": "16.x"
   },
