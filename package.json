@@ -9,8 +9,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.mjs",
-    "dev": "nodemon index.mjs",
-    "build": "npm i"
+    "dev": "nodemon index.mjs"
   },
   "keywords": [
     "animeSearcher",
