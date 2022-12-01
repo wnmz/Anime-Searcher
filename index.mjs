@@ -24,3 +24,10 @@ shard.spawn({ amount: shard.totalShards, delay: 5500, timeout: 50000 });
 shard.on('shardCreate', sh => {
 	console.log(`[SHARD] Shard ${sh.id} was created.`);
 });
+
+// reppl.it compatibility test
+const express = require('express');
+const app = express();
+const port = 3000;
+
+app.get('/', function(request, response){ response.send(`Hello!`) });
