@@ -47,7 +47,7 @@ const client = new Discord.Client({
 	],
 	messageCacheMaxSize: 1,
 	messageCacheLifetime: 1,
-	partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER'],
+	partials: ['CHANNEL', 'REACTION', 'USER'],
 });
 
 const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
