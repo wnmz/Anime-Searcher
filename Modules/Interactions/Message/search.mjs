@@ -27,7 +27,7 @@ export default {
 	run: async (interaction) => {
 		const message = interaction.options.getMessage('message');
 		const imageURL = interaction.options.getAttachment('attachment')?.url
-			|| interaction.options.getString('image')
+			|| interaction.options.getString('url')
 			|| message?.attachments?.first?.()?.url
 			|| message?.content?.match(urlCheckRegExp)?.shift();
 

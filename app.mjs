@@ -30,13 +30,13 @@ const client = new Client({
 	intents: [
 		Intents.FLAGS.GUILDS,
 		Intents.FLAGS.GUILD_MESSAGES,
-		Intents.FLAGS.GUILD_MESSAGE_TYPING,
-		Intents.FLAGS.DIRECT_MESSAGES,
 	],
 	messageCacheMaxSize: 1,
 	messageCacheLifetime: 1,
 	partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER'],
 });
+
+client.setMaxListeners(10);
 
 const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
 
