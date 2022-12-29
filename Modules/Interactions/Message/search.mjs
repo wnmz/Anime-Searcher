@@ -32,7 +32,7 @@ export default {
 			|| message?.attachments?.first()?.url
 			|| message?.content?.match(urlCheckRegExp)?.shift();
 
-		await interaction.deferReply({ ephemeral: true });
+		await interaction.deferReply({ ephemeral: false });
 
 		if (!imageURL) return interaction.editReply({ content: 'Image not found!', ephemeral: true });
 
