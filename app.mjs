@@ -3,7 +3,7 @@ import commands from './Modules/commands.mjs';
 import Mongodb from './Modules/mongo.mjs';
 import { isUserSpammer } from './Modules/antispam.mjs';
 
-import { Client, IntentsBitField, Partials } from 'discord.js';
+import { Client, IntentsBitField, Options, Partials, Sweepers } from 'discord.js';
 import DBL from 'dblapi.js';
 
 const {
@@ -13,7 +13,6 @@ const {
 } = process.env;
 
 const urlCheckRegExp = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i;
-
 const db = new Mongodb(MONGODB_URI);
 const client = new Client({
 	intents: [
@@ -30,11 +29,42 @@ const client = new Client({
 		Partials.ThreadMember,
 		Partials.User
 	],
-	messageCacheMaxSize: 1,
-	messageCacheLifetime: 1,
+	makeCache: Options.cacheWithLimits({
+		ApplicationCommandManager: { maxSize: 0 },
+		BaseGuildEmojiManager: { maxSize: 0 },
+		GuildEmojiManager: { maxSize: 0 },
+		GuildBanManager: { maxSize: 0 },
+		GuildInviteManager: { maxSize: 0 },
+		GuildMemberManager: {
+			maxSize: 1,
+			keepOverLimit: (member) => member.id === client.user.id,
+		},
+		GuildStickerManager: { maxSize: 0 },
+		MessageManager: {
+			maxSize: 50,
+			sweepInterval: 60,
+			sweepFilter: Sweepers.filterByLifetime({
+				lifetime: 120000
+			})
+		},
+		PresenceManager: { maxSize: 0 },
+		ReactionManager: { maxSize: 0 },
+		ReactionUserManager: { maxSize: 0 },
+		StageInstanceManager: { maxSize: 0 },
+		ThreadManager: { maxSize: 0 },
+		ThreadMemberManager: { maxSize: 0 },
+		UserManager: { maxSize: 0 },
+		VoiceStateManager: { maxSize: 0 }
+	}),
+	sweepers: {
+		...Options.DefaultSweeperSettings,
+		invites: { interval: 10, lifetime: 1 },
+		messages: { interval: 60, lifetime: 10 },
+		threads: { interval: 10, lifetime: 1 },
+	}
 });
 
-const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
+//const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
 
 let dbInitialized = false;
 
