@@ -1,9 +1,10 @@
-import { MessageActionRow, MessageButton } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { SlashCommandBuilder, ContextMenuCommandBuilder } from '@discordjs/builders';
+
 import SearchEngine from '../../SearchEngines/searchEngine.mjs';
 const urlCheckRegExp = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i;
 
-export default {
+export default {	
 	name: 'search',
 	description: 'Provide an image URL with this command to look for it\'s source',
 	getSlashBuilder: function () {
@@ -28,7 +29,7 @@ export default {
 		const message = interaction.options.getMessage('message');
 		const imageURL = interaction.options.getAttachment('attachment')?.url
 			|| interaction.options.getString('url')
-			|| message?.attachments?.first?.()?.url
+			|| message?.attachments?.first()?.url
 			|| message?.content?.match(urlCheckRegExp)?.shift();
 
 		await interaction.deferReply({ ephemeral: true });
@@ -81,26 +82,26 @@ export default {
 };
 
 const formMsgComponents = (isDisabled = false) => {
-	const prevBtn = new MessageButton()
+	const prevBtn = new ButtonBuilder()
 		.setCustomId('up')
 		.setLabel('Up')
-		.setStyle('SUCCESS')
+		.setStyle(ButtonStyle.Success)
 		.setEmoji('⬆️')
 		.setDisabled(isDisabled);
 
-	const nextBtn = new MessageButton()
+	const nextBtn = new ButtonBuilder()
 		.setCustomId('down')
 		.setLabel('Down')
-		.setStyle('SUCCESS')
+		.setStyle(ButtonStyle.Success)
 		.setEmoji('⬇️')
 		.setDisabled(isDisabled);
 
-	const inviteBtn = new MessageButton()
+	const inviteBtn = new ButtonBuilder()
 		.setLabel('Invite Bot')
 		.setURL('https://discord.com/oauth2/authorize?client_id=559247918280867848&scope=bot&permissions=52288')
-		.setStyle('LINK');
+		.setStyle(ButtonStyle.Link);
 
-	const buttonRow = new MessageActionRow()
+	const buttonRow = new ActionRowBuilder()
 		.addComponents(prevBtn, nextBtn, inviteBtn);
 
 	return [buttonRow];

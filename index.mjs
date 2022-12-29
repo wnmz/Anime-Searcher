@@ -20,7 +20,7 @@ const shard = new ShardingManager('./app.mjs', {
 	shardList: 'auto',
 });
 
-shard.spawn({ amount: shard.totalShards, delay: 5500, timeout: 50000 });
+shard.spawn({ amount: shard.totalShards, delay: 1000, timeout: 50000 });
 shard.on('shardCreate', sh => {
 	console.log(`[SHARD] Shard ${sh.id} was created.`);
 });

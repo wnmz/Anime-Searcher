@@ -3,7 +3,7 @@ import commands from './Modules/commands.mjs';
 import Mongodb from './Modules/mongo.mjs';
 import { isUserSpammer } from './Modules/antispam.mjs';
 
-import { Client, Intents, Options } from 'discord.js';
+import { Client, IntentsBitField, Partials } from 'discord.js';
 import DBL from 'dblapi.js';
 
 const {
@@ -16,27 +16,23 @@ const urlCheckRegExp = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i;
 
 const db = new Mongodb(MONGODB_URI);
 const client = new Client({
-	makeCache: Options.cacheWithLimits({
-		MessageManager: 0,
-		GuildBanManager: 0,
-		PresenceManager: 0,
-		ReactionManager: 0,
-		ReactionUserManager: 0,
-		StageInstanceManager: 0,
-		ThreadManager: 0,
-		ThreadMemberManager: 0,
-		VoiceStateManager: 0,
-	}),
 	intents: [
-		Intents.FLAGS.GUILDS,
-		Intents.FLAGS.GUILD_MESSAGES,
+		IntentsBitField.Flags.Guilds,
+		IntentsBitField.Flags.GuildMessages,
+		IntentsBitField.Flags.GuildMessageTyping,
+	],
+	partials: [
+		Partials.GuildMember,
+		Partials.Channel,
+		Partials.GuildScheduledEvent,
+		Partials.Message,
+		Partials.Reaction,
+		Partials.ThreadMember,
+		Partials.User
 	],
 	messageCacheMaxSize: 1,
 	messageCacheLifetime: 1,
-	partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER'],
 });
-
-client.setMaxListeners(10);
 
 const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
 
@@ -54,7 +50,7 @@ client.on('ready', async () => {
 
 client.on('interactionCreate', async (interaction) => {
 	if (!dbInitialized) return;
-	if (!interaction.isCommand() && !interaction.isMessageContextMenu()) return;
+	if (!interaction.isCommand() && !interaction.isMessageContextMenuCommand()) return;
 	if (!interactions[interaction.commandName]) return;
 	interactions[interaction.commandName].run(interaction, db);
 

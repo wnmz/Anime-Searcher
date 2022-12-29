@@ -1,4 +1,4 @@
-import { MessageActionRow, MessageButton } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
 import { SlashCommandBuilder } from '@discordjs/builders';
 
 // TODO: Upgrade code quality
@@ -7,7 +7,7 @@ export default {
 	isInteraction: true,
 	isCommand: true,
 	description: 'Show Help Menu /(•_•)/',
-	getSlashBuilder: function() {
+	getSlashBuilder: function () {
 		return new SlashCommandBuilder()
 			.setName(this.name)
 			.setDescription(this.description);
@@ -16,9 +16,18 @@ export default {
 		await interaction.deferReply({ ephemeral: true });
 
 		const options = {
-			first: '**Commands**\n\n' +
-				'**`/search`** `file attachment or image url` - search for image source.\n' +
-				// '**`/setchannel`** - Set channel in which bot will be triggered on every image.\n\n' +
+			commands: 
+				'🚀 **Commands**:\n' +
+				'**•** `/setchannel` `[text channel]` — set the specified text channel as the location where the bot will process messages that mention it.\n'+
+				'**•** `/search` `[file attachment or image url]` — search for image source (in any channel).\n' +
+				'\n' +
+				'💬 **How do I use the bot?**\n' +
+				'There are two ways to use the bot:\n' +
+				'**1.** To have the bot\'s answers visible to everyone in a specified channel, set the bot\'s work channel using the /setchannel command and mention the bot with a link or image attachment.\n'+
+				`\`Example:\` ${interaction.client.user} https://website.com/image.png\n`+
+				'\n' +
+				'**2.** To keep the bot\'s answers private, use the `/search` command with a URL or attachment as the parameter. The bot will send the result, that only you can see.' +
+				'\n' +
 				'\n`Click the buttons below to select options you need.`',
 			// first: "** **",
 			// Old instruction if yoy're selfhosting.
@@ -28,42 +37,44 @@ export default {
 			// '**2)** Connect bot to that channel using `/setchannel` command.\n' +
 			// `**Example usage -> **\`/setchannel\` ${interaction.channel}\n` +
 			// '**3)** Send any image into selected channel.',
-			second: '**Why is my search result wrong?**\n\n' +
+			wrong_results: '**Why is my search result wrong?**\n\n' +
 				'Actually idk, but I would recommend you to check this: [https://trace.moe/faq](https://trace.moe/faq)\n',
-			third: '**There\'re problems using/setting the bot, what should I do?**\n\n' +
+			need_help: '**There\'re problems using/setting the bot, what should I do?**\n\n' +
 				'You\'re always welcome to our support server ♥️ - [https://discord.gg/TMxh6xz](https://discord.gg/TMxh6xz)\n',
 		};
 
-		const firstBtn = new MessageButton()
-			.setCustomId('first')
+		const commandsBtn = new ButtonBuilder()
+			.setCustomId('commands')
 			.setLabel('Commands')
-			.setStyle('SUCCESS');
+			.setStyle(ButtonStyle.Success);
 
-		const secondBtn = new MessageButton()
-			.setCustomId('second')
+		const wrongResultsBtn = new ButtonBuilder()
+			.setCustomId('wrong_results')
 			.setLabel('Why is my search result wrong?')
-			.setStyle('SUCCESS');
+			.setStyle(ButtonStyle.Success);
 
-		const thirdBtn = new MessageButton()
-			.setCustomId('third')
+		const needHelpBtn = new ButtonBuilder()
+			.setCustomId('need_help')
 			.setLabel('There\'re problems using/setting the bot, what should I do?')
-			.setStyle('SUCCESS');
+			.setStyle(ButtonStyle.Success);
 
-		const invite = new MessageButton()
+		const inviteBot = new ButtonBuilder()
 			.setLabel('Invite Bot')
 			.setURL('https://discord.com/oauth2/authorize?client_id=559247918280867848&scope=bot&permissions=52288')
-			.setStyle('LINK');
-		const serverInvite = new MessageButton()
+			.setStyle(ButtonStyle.Link);
+
+		const serverInvite = new ButtonBuilder()
 			.setLabel('Support Server')
 			.setURL('https://discord.gg/TMxh6xz')
-			.setStyle('LINK');
+			.setStyle(ButtonStyle.Link);
 
 
-		const btnRows = [
-			new MessageActionRow().addComponents(firstBtn, secondBtn),
-			new MessageActionRow().addComponents(thirdBtn),
-			new MessageActionRow().addComponents(invite, serverInvite),
-		];
+		const btnRows =
+			[
+				new ActionRowBuilder().addComponents([commandsBtn, wrongResultsBtn]),
+				new ActionRowBuilder().addComponents([needHelpBtn]),
+				new ActionRowBuilder().addComponents([inviteBot, serverInvite]),
+			];
 
 		try {
 			const answer = await interaction.editReply({
@@ -71,7 +82,7 @@ export default {
 				embeds: [{
 					title: '📓 Help Menu',
 					color: 0x36393E,
-					description: options.first,
+					description: options.commands,
 					// TODO: Update gif
 					// image: {
 					// 	url: 'https://cdn.discordapp.com/attachments/758209391731277829/841300623684665394/output.gif',
@@ -80,7 +91,7 @@ export default {
 						text: 'Support: https://discord.gg/TMxh6xz',
 						icon_url: interaction.member.user.avatarURL(),
 					},
-					timestamp: Date.now(),
+					timestamp: new Date().toISOString(),
 				}],
 				ephimeral: true,
 			});
@@ -88,32 +99,32 @@ export default {
 			const filter = (i) => i.user.id === interaction.user.id;
 
 			const collector = answer.createMessageComponentCollector(filter, {
-				time: 120000,
+				time: 60000,
 			});
 
 			collector.on('collect', async btnInteraction => {
-				const embed = btnInteraction.message.embeds[0];
+				const {data} = new EmbedBuilder(btnInteraction.message.embeds[0]);
 
 				switch (btnInteraction.customId) {
-				case ('first'):
-					embed.description = options.first;
-					// embed.image = {
-					// 	url: 'https://cdn.discordapp.com/attachments/758209391731277829/841300623684665394/output.gif',
-					// };
-					break;
-				case ('second'):
-					embed.description = options.second;
-					embed.image = null;
-					break;
-				case ('third'):
-					embed.description = options.third;
-					embed.image = null;
-					break;
+					case ('commands'):
+						data.description = options.commands;
+						// embed.image = {
+						// 	url: 'https://cdn.discordapp.com/attachments/758209391731277829/841300623684665394/output.gif',
+						// };
+						break;
+					case ('wrong_results'):
+						data.description = options.wrong_results;
+						data.image = null;
+						break;
+					case ('need_help'):
+						data.description = options.need_help;
+						data.image = null;
+						break;
 				}
 
 				btnInteraction.update({
 					components: btnRows,
-					embeds: [embed],
+					embeds: [data],
 				});
 			});
 

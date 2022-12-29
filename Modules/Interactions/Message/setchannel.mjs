@@ -1,5 +1,6 @@
 ﻿/* eslint-disable curly */
 import { SlashCommandBuilder } from '@discordjs/builders';
+import { ChannelType } from 'discord.js';
 
 export default {
 	name: 'setchannel',
@@ -28,7 +29,7 @@ export default {
 			ephemeral: true,
 		});
 
-		if (workChannel.type !== 'GUILD_TEXT') return interaction.reply({
+		if (workChannel.type !== ChannelType.GuildText) return interaction.reply({
 			content: '(づ￣ ³￣)づ How am i supposed to send messages in non-text channel? Please specify a *text* channel',
 			ephemeral: true,
 		});
