@@ -13,8 +13,12 @@ const {
 } = process.env;
 
 const urlCheckRegExp = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i;
+import { ClusterClient, getInfo } from 'discord-hybrid-sharding';
 const db = new Mongodb(MONGODB_URI);
+
 const client = new Client({
+    shards: getInfo().SHARD_LIST,
+    shardCount: getInfo().TOTAL_SHARDS,
 	intents: [
 		IntentsBitField.Flags.Guilds,
 		IntentsBitField.Flags.GuildMessages,
@@ -64,6 +68,7 @@ const client = new Client({
 	}
 });
 
+client.cluster = new ClusterClient(client);
 //const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
 
 let dbInitialized = false;

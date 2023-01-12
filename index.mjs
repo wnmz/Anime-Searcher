@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { ShardingManager } from 'discord.js';
 import { registerCommands } from './Modules/registerCommands.mjs';
+import { ClusterManager } from 'discord-hybrid-sharding';
 
 const {
 	BOT_TOKEN,
@@ -14,13 +14,11 @@ if (!MONGODB_URI) throw new Error('MONGODB_URI is not defined in process environ
 // Optional
 if (BOT_CLIENT_ID) registerCommands(BOT_CLIENT_ID);
 
-const shard = new ShardingManager('./app.mjs', {
-	token: BOT_TOKEN,
+const manager = new ClusterManager(`./app.mjs`, {
 	totalShards: 'auto',
-	shardList: 'auto',
+	shardsPerClusters: 2,
+	token: BOT_TOKEN
 });
 
-shard.spawn({ amount: shard.totalShards, delay: 1000, timeout: 50000 });
-shard.on('shardCreate', sh => {
-	console.log(`[SHARD] Shard ${sh.id} was created.`);
-});
+manager.on('clusterCreate', cluster => console.log(`Launched Cluster ${cluster.id}`));
+manager.spawn({ timeout: -1 });
