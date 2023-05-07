@@ -5,12 +5,13 @@ ___
 ___
 # Installation
 1. Install [NodeJS](https://nodejs.org/en/download/) (Version > 16.x)
-2. Clone repository: `
+2. Install [Redis](https://redis.io/docs/getting-started/installation/) 
+3. Clone repository: `
 git clone https://github.com/wnmz/Anime-Searcher.git
 `
-3. Install dependencies in project folder: `npm install`
+4. Install dependencies in project folder: `npm install`
 
-4. Rename file `.env.example` to `.env` and put you environment variables here
+5. Rename file `.env.example` to `.env` and put you environment variables here
     ```
     BOT_TOKEN= ### REQUIRED  
     MONGODB_URI= #### REQUIRED  
@@ -24,10 +25,10 @@ git clone https://github.com/wnmz/Anime-Searcher.git
     IMAGE_PROXY_API_POSTPARAMS= ### Optional
         Example: &width=400&height=225
     ```
-5. Start script `npm run start` or `node app.mjs`
+6. Start script `npm run start` or `node app.mjs`
 
-# Have no clue what is ImageProxyAPI?
- It's a simple express server that proxy images by urls. It helps the bot to resize images. 
+# Image Proxy API (deprecated)
+ It's a simple express server that proxy images by urls. It helps the bot to resize images, and __was used__ to fix trace.moe bug when discord was unable to show their images  
  <br>Repository: https://github.com/wnmz/ImageProxyAPI
 
 # Demo (Old version w/o buttons)
