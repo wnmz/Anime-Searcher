@@ -12,9 +12,10 @@ const {
 	MONGODB_URI,
 } = process.env;
 
-const urlCheckRegExp = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i;
 import { ClusterClient, getInfo } from 'discord-hybrid-sharding';
+
 const db = new Mongodb(MONGODB_URI);
+await db.connect();
 
 const client = new Client({
     shards: getInfo().SHARD_LIST,
@@ -71,11 +72,7 @@ const client = new Client({
 client.cluster = new ClusterClient(client);
 //const dbl = TOPGG_TOKEN ? new DBL(TOPGG_TOKEN, client) : undefined;
 
-let dbInitialized = false;
-
 client.on('ready', async () => {
-	await db.init();
-	dbInitialized = true;
 	console.log(`Logged in as ${client.user.tag}`);
 	console.log(`Working with: ${client.guilds.cache.size} guilds`);
 	client.user.setActivity('/help', {
@@ -84,19 +81,19 @@ client.on('ready', async () => {
 });
 
 client.on('interactionCreate', async (interaction) => {
-	if (!dbInitialized) return;
+	if (db.isConnected == false) return;
 	if (!interaction.isCommand() && !interaction.isMessageContextMenuCommand()) return;
 	if (!interactions[interaction.commandName]) return;
 	interactions[interaction.commandName].run(interaction, db);
-
 });
 
 client.on('messageCreate', async msg => {
-	if (!dbInitialized) return;
+	if (db.isConnected == false) return;
 
 	if (msg.author.bot) return;
 
 	// In case the message includes image and sent to the work channel
+	const urlCheckRegExp = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|png|gif)/i;
 	const isIncludesImage = msg.attachments?.first?.()?.url ?? msg.content.match(urlCheckRegExp)?.[0];
 	if (isIncludesImage) {
 		if (isUserSpammer(msg)) return;

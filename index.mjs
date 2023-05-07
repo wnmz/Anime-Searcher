@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { registerCommands } from './Modules/registerCommands.mjs';
-import { ClusterManager } from 'discord-hybrid-sharding';
+import { ClusterManager, HeartbeatManager } from 'discord-hybrid-sharding';
 
 const {
 	BOT_TOKEN,
@@ -16,9 +16,17 @@ if (BOT_CLIENT_ID) registerCommands(BOT_CLIENT_ID);
 
 const manager = new ClusterManager(`./app.mjs`, {
 	totalShards: 'auto',
-	shardsPerClusters: 2,
-	token: BOT_TOKEN
+	shardsPerClusters: 1,
+	token: BOT_TOKEN,
+	respawn: true,
 });
+
+manager.extend(
+    new HeartbeatManager({
+        interval: 2000, 
+        maxMissedHeartbeats: 5,
+    })
+);
 
 manager.on('clusterCreate', cluster => console.log(`Launched Cluster ${cluster.id}`));
 manager.spawn({ timeout: -1 });
