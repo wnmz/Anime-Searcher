@@ -1,28 +1,33 @@
 {
-  "name": "weebsearcher",
-  "version": "1.0.0",
-  "description": "anime searcher that uses trace.moe",
-  "main": "index.js",
-  "engines": {
-    "node": "14.x"
+  "name": "anime-searcher",
+  "author": {
+    "email": "damnwnm@gmail.com",
+    "name": "Daniil Parkov",
+    "url": "https://github.com/wnmz"
+  },
+  "repository": {
+    "url": "https://github.com/wnmz/Anime-Searcher"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npx tsc-watch --onSuccess \"node --inspect ./dist/index.js\"",
+    "build": "npx tsc",
+    "start": "npm run build && node ./dist/index.js",
+    "lint": "npx eslint ./src/",
+    "prettier": "npx prettier ./src/ --write",
+    "fix": "npm run prettier && npm run lint"
   },
-  "keywords": [
-    "bruh",
-    "anime",
-    "trace.moe",
-    "search"
-  ],
-  "author": "wnm",
-  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.59.11",
+    "@typescript-eslint/parser": "^5.59.11",
+    "eslint": "^8.43.0",
+    "prettier": "2.8.8",
+    "tsc-watch": "^6.0.4",
+    "typescript": "5.0.4"
+  },
   "dependencies": {
-    "axios": "^0.19.2",
-    "dblapi.js": "^2.4.0",
-    "discord.js": "^12.0.2",
-    "mongodb": "^3.5.5",
-    "node-fetch": "^2.6.0",
-    "request": "^2.88.2"
+    "axios": "^1.4.0",
+    "discord.js": "^14.11.0",
+    "dotenv": "^16.3.0",
+    "tslog": "^4.8.2"
   }
 }
