@@ -1,5 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { IBaseProvider, IProviderOptions } from '../interfaces/IBaseProvider';
+import {
+  IBaseProvider,
+  IProviderOptions,
+  IProviderSearchOptions,
+} from '../interfaces/IBaseProvider';
 import {
   IProviderSearchResult,
   ResultStatus,
@@ -11,7 +15,7 @@ export class TraceMoeProvider implements IBaseProvider {
   private readonly _logger: Logger;
   public readonly options: IProviderOptions;
   public readonly name: string;
-  public readonly baseUrl: string = 'https://api.trace.moe/';
+  public readonly BASE_URL: string = 'https://api.trace.moe/';
 
   constructor(options: IProviderOptions) {
     this.name = 'trace.moe';
@@ -20,7 +24,9 @@ export class TraceMoeProvider implements IBaseProvider {
     this._logger = new Logger(this.name);
   }
 
-  public async search(image_url: string): Promise<IProviderSearchResult> {
+  public async search(
+    searchOptions: IProviderSearchOptions
+  ): Promise<IProviderSearchResult> {
     const searchResult: IProviderSearchResult = {
       providerName: this.name,
       data: [],
@@ -29,7 +35,7 @@ export class TraceMoeProvider implements IBaseProvider {
     };
 
     try {
-      const response = await this.fetch(image_url);
+      const response = await this.fetch(searchOptions);
       const data = response.data as TraceMoeSearchResponse;
       if (data.error) {
         searchResult.status = ResultStatus.STATUS_ERROR;
@@ -57,14 +63,15 @@ export class TraceMoeProvider implements IBaseProvider {
     return searchResult;
   }
 
-  private fetch(image_url: string): Promise<AxiosResponse> {
-    return axios.get(this.baseUrl + 'search', {
+  private fetch(searchOptions: IProviderSearchOptions): Promise<AxiosResponse> {
+    return axios.get(this.BASE_URL + 'search', {
       method: 'GET',
       params: {
         anilistInfo: true,
-        cutBorders: true,
-        url: image_url,
+        // cutBorders: true, [disabled causes request to be 2x times slower]
+        url: searchOptions.image_url,
       },
+      proxy: searchOptions.proxy,
     });
   }
 }

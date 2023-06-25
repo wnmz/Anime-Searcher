@@ -1,15 +1,18 @@
 import 'dotenv/config';
-import { Searcher } from './modules/searcher/searcher';
+import { BaseInteraction, Client, GatewayIntentBits } from 'discord.js';
 
-const image_url =
-  'https://media.discordapp.net/attachments/861542336679903252/1119532222450507776/image.png?width=365&height=277';
-const searcher = new Searcher({
-  disabled_providers: [],
+const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+
+client.on('ready', () => {
+  console.log(`Logged in as ${client?.user?.tag}!`);
 });
 
-const main = async () => {
-  const result = await searcher.search(image_url);
-  console.dir(result);
-};
+client.on('interactionCreate', async interaction => {
+  if (!interaction.isChatInputCommand()) return;
 
-main();
+  if (interaction.commandName === 'ping') {
+    await interaction.reply('Pong!');
+  }
+});
+
+client.login(process.env.DISCORD_BOT_TOKEN);

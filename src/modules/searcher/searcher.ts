@@ -1,6 +1,8 @@
 import { Logger } from '../logger';
-//import { StatsTracker } from '../statistics';
-import { IBaseProvider } from './interfaces/IBaseProvider';
+import {
+  IBaseProvider,
+  IProviderSearchOptions,
+} from './interfaces/IBaseProvider';
 import {
   IProviderSearchResult,
   ResultStatus,
@@ -12,6 +14,10 @@ export interface ISearcherOptions {
   disabled_providers?: Array<string>;
   providers?: Array<IBaseProvider>;
 }
+
+const isFulfilled = <T>(
+  input: PromiseSettledResult<T>
+): input is PromiseFulfilledResult<T> => input.status === 'fulfilled';
 
 export class Searcher {
   private readonly _logger = new Logger('[SEARCH MODULE]');
@@ -30,34 +36,22 @@ export class Searcher {
   }
 
   public async search(
-    image_url: string
+    searchOptions: IProviderSearchOptions
   ): Promise<Array<IProviderSearchResult>> {
     const providers = this.sourceProviders;
-    const results: Array<IProviderSearchResult> = [];
 
-    try {
-      for (const provider of providers) {
-        if (this.disabledProviders.includes(provider.name)) {
-          continue;
-        }
+    const promises = [...providers]
+      .filter(
+        provider => this.disabledProviders.includes(provider.name) == false
+      )
+      .map(provider => provider.search(searchOptions));
 
-        const result: IProviderSearchResult = await provider.search(image_url);
+    const requests: PromiseSettledResult<IProviderSearchResult>[] =
+      await Promise.allSettled(promises);
 
-        //StatsTracker.updateProviderStatistic(provider.name, result);
+    const valid = requests.filter(isFulfilled).map(res => res.value);
 
-        if (result.status == ResultStatus.STATUS_ERROR) {
-          this._logger.warn(
-            `Error while searching with provider: "${provider.name}"`
-          );
-        }
-
-        results.push(result);
-      }
-    } catch (e: Error | unknown) {
-      this._logger.error(e);
-    }
-
-    return results;
+    return valid;
   }
 
   public registerProvider(provider: IBaseProvider): void {
@@ -69,8 +63,6 @@ export class Searcher {
     this.registerProvider(
       new TraceMoeProvider({
         api_key: process.env.TRACE_MOE_API_KEY,
-        filter_nsfw: false,
-        max_results: 10,
       })
     );
 
@@ -78,8 +70,6 @@ export class Searcher {
       this.registerProvider(
         new SauceNaoProvider({
           api_key: process.env.SAUCE_NAO_API_KEY,
-          filter_nsfw: false,
-          max_results: 10,
         })
       );
     }

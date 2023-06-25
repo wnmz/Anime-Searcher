@@ -1,5 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { IBaseProvider, IProviderOptions } from '../interfaces/IBaseProvider';
+import {
+  IBaseProvider,
+  IProviderOptions,
+  IProviderSearchOptions,
+} from '../interfaces/IBaseProvider';
 import {
   IProviderSearchResult,
   ResultStatus,
@@ -9,25 +13,26 @@ import { SauceNaoResult } from './interfaces';
 
 export interface ISauceNaoProviderOptions extends IProviderOptions {
   api_key: string;
-  filter_nsfw: boolean;
 }
 
 export class SauceNaoProvider implements IBaseProvider {
   private readonly _logger: Logger;
 
   public readonly name: string;
-  public readonly baseUrl: string;
+  public readonly BASE_URL: string;
   public readonly options: ISauceNaoProviderOptions;
 
   constructor(options: ISauceNaoProviderOptions) {
     this.name = 'sauce.nao';
-    this.baseUrl = 'https://saucenao.com/search.php';
+    this.BASE_URL = 'https://saucenao.com/search.php';
     this.options = options;
 
     this._logger = new Logger(this.name);
   }
 
-  async search(image_url: string): Promise<IProviderSearchResult> {
+  async search(
+    searchOptions: IProviderSearchOptions
+  ): Promise<IProviderSearchResult> {
     const searchResult: IProviderSearchResult = {
       providerName: this.name,
       status: ResultStatus.STATUS_OK,
@@ -36,7 +41,7 @@ export class SauceNaoProvider implements IBaseProvider {
     };
 
     try {
-      const response = await this.fetch(image_url);
+      const response = await this.fetch(searchOptions);
       const data = response.data as SauceNaoResult;
 
       searchResult.data = data.results;
@@ -56,19 +61,20 @@ export class SauceNaoProvider implements IBaseProvider {
     return searchResult;
   }
 
-  fetch(image_url: string): Promise<AxiosResponse> {
+  fetch(searchOptions: IProviderSearchOptions): Promise<AxiosResponse> {
     const params = new URLSearchParams();
     params.append('api_key', this.options.api_key);
     params.append('output_type', '2');
-    params.append('url', image_url);
+    params.append('url', searchOptions.image_url);
     params.append('database', '21');
-    params.append('hide', this.options.filter_nsfw ? '2' : '0');
+    params.append('hide', searchOptions.filter_nsfw ? '2' : '0');
 
-    return axios.post(this.baseUrl, params.toString(), {
+    return axios.post(this.BASE_URL, params.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
+      proxy: searchOptions.proxy,
     });
   }
 }

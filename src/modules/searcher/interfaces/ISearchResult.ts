@@ -3,7 +3,6 @@ export enum ResultStatus {
   STATUS_ERROR,
 }
 
-// TODO: DatType above array with .next .prev .all methods
 export interface IProviderSearchResult {
   providerName: string;
   status: ResultStatus;
