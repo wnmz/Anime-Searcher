@@ -14,18 +14,18 @@ if (!MONGODB_URI) throw new Error('MONGODB_URI is not defined in process environ
 // Optional
 if (BOT_CLIENT_ID) registerCommands(BOT_CLIENT_ID);
 
-const manager = new ClusterManager(`./app.mjs`, {
+const manager = new ClusterManager('./app.mjs', {
 	totalShards: 'auto',
-	shardsPerClusters: 1,
+	shardsPerClusters: 5,
 	token: BOT_TOKEN,
 	respawn: true,
 });
 
 manager.extend(
-    new HeartbeatManager({
-        interval: 2000, 
-        maxMissedHeartbeats: 5,
-    })
+	new HeartbeatManager({
+		interval: 2000,
+		maxMissedHeartbeats: 5,
+	}),
 );
 
 manager.on('clusterCreate', cluster => console.log(`Launched Cluster ${cluster.id}`));

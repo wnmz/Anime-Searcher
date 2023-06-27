@@ -23,11 +23,17 @@ export default class TraceMoe {
 	}
 
 	fetch(imageURL) {
+		let url = `https://api.trace.moe/search?url=${encodeURIComponent(imageURL)}`;
+
+		if (process.env.PROXY_API) {
+			url = process.env.PROXY_API + url;
+		}
+
 		return new Promise(async (resolve) => {
 			try {
 				const request = await axios({
-					method: 'POST',
-					url: `https://api.trace.moe/search?url=${encodeURIComponent(imageURL)}`,
+					method: process.env.PROXY_API ? 'GET' : 'POST',
+					url: url,
 					headers: {
 						'Content-Type': 'application/json',
 					},
