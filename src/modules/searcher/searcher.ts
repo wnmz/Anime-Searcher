@@ -3,10 +3,7 @@ import {
   IBaseProvider,
   IProviderSearchOptions,
 } from './interfaces/IBaseProvider';
-import {
-  IProviderSearchResult,
-  ResultStatus,
-} from './interfaces/ISearchResult';
+import { IProviderSearchResult } from './interfaces/ISearchResult';
 import { SauceNaoProvider } from './saucenao/saucenao';
 import { TraceMoeProvider } from './tracemoe/tracemoe';
 
